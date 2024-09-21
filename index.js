@@ -4,7 +4,7 @@ const compressionStartInput = document.getElementById("compression-start-input")
 const message = document.getElementById("notification");
 
 // check if the browser is compatible
-if (ArrayBuffer.prototype.resizable === undefined || window.CompressionStream === undefined || ArrayBuffer.prototype.transferToFixedLength === undefined) {
+if (!ArrayBuffer.prototype.hasOwnProperty("resizable") || window.CompressionStream === undefined || !ArrayBuffer.prototype.hasOwnProperty("transferToFixedLength")) {
 	message.setAttribute("class", "error");
 	message.innerText = "⚠️ Update Your Browser. This tool needs the latest features to function properly.";
 }
