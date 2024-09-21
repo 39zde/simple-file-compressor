@@ -11,4 +11,6 @@ nothing stands in the way of selecting a file, compressing it with the [Compress
 
 For now there are two formats supported: `gzip` and `deflate`, with no control over compression strength. 
 
+Try it here: [File Compressor](https://39zde.github.io/simple-file-compressor/)
+
 Spread the word and star this repo. That's all, thank you for your time.
