@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" name="Simple File Compressor" lang="en-US,de-DE" http-equiv="Content-Security-Policy"
+        content="default-src 'none'; script-src 'self'; style-src 'self'" description="A tool to reduce the file size of your files. Free online, local, tracking-free, advert-free file compression. Simple and fast." />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes" />
+    <link rel="stylesheet" type="text/css" href="index.css">
+    <title>
+        Simple File Compressor - Reduce the file size of your files
+    </title>
+    <noscript>This site needs JavaScript to be enabled, since all the compression happens locally.</noscript>
+</head>
+
+<body>
+    <section>
+        <hgroup>
+            <h1>
+                File Compressor
+            </h1>
+            <p>A local file compression.<br> All data stays on your machine.</p>
+            <small>Creates a Zip or Gzip Archive, from images, videos, PDFs or any other file type.</small>
+        </hgroup>
+        <main>
+            <span id="notification">
+            </span>
+            <div class="flow">
+                <label for="compression-file-input">
+                    <span>1. Select a file</span>
+                    <input type="file" id="compression-file-input">
+                </label>
+                <label for="compression-type-input">
+                    <span>2. Select a compression Type</span>
+                    <select id="compression-type-input">
+                        <option value="gzip">
+                            gzip
+                        </option>
+                        <option value="deflate">
+                            deflate
+                        </option>
+                    </select>
+                </label>
+                <label for="compression-start-input">
+                    <span>3. Compress the file</span>
+                    <input id="compression-start-input" type="button" value="Go" disabled>
+                </label>
+            </div>
+        </main>
+        <footer>
+            This site is open source. Check it out on <a href="https://github.com/39zde/simple-file-compressor" target="_blank">Github</a>
+        </footer>
+    </section>
+</body>
+<script src="index.js"></script>
+
+</html>
