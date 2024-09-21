@@ -13,4 +13,7 @@ For now there are two formats supported: `gzip` and `deflate`, with no control o
 
 Try it here: [File Compressor](https://39zde.github.io/simple-file-compressor/)
 
+- One might say: `7Zip can also do this, why would I use this instead?`
+- To which one might reply: `Yes`
+
 Spread the word and star this repo. That's all, thank you for your time.
