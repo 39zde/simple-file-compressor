@@ -1,11 +1,24 @@
+:root {
+    --color-primary-light: #88a7ff;
+    --color-primary: #4878ff;
+    --color-primary-dark: #112e80;
+    --color-focus: #e56700;
+    --color-focus-light: #ffc188;
+    --color-error: #bf3838;
+    --color-success: #1fbf41;
+}
+
+html {
+    font-family: sans-serif;
+}
+
 hgroup {
     text-align: center;
+    margin-bottom: 12px;
 
     &>* {
         margin: 0;
     }
-
-    margin-bottom: 12px;
 }
 
 h1 {
@@ -45,14 +58,13 @@ label {
     }
 }
 
-input,
+input:not([type="file"]),
 select {
     height: 42px;
     min-width: 128px;
     border-radius: 21px;
-    border: 1px solid red;
     background-color: white;
-    border: 2px solid #4878ff;
+    border: 2px solid var(--color-primary);
     color: black;
     text-align: center;
     font-weight: 500;
@@ -60,12 +72,79 @@ select {
     cursor: pointer;
 }
 
-input[type="file"] {
-    align-content: center;
+.file-upload {
+    display: flex;
+}
+
+input[type="file"]::-webkit-file-upload-button,
+::file-selector-button {
+    height: 42px;
+    min-width: 128px;
+    border-radius: 21px;
+    background-color: white;
+    border: 2px solid #4878ff;
+    color: black;
+    text-align: center;
+    font-weight: 500;
+    font-size: 20px;
+    cursor: pointer;
+    margin-inline-end: 12px;
+    letter-spacing: normal;
+}
+
+
+
+
+input:not([type="file"]):hover,
+input[type="file"]::file-selector-button:hover {
+    border-color: var(--color-primary-light);
+    background-color: var(--color-primary-light);
+}
+
+input[type="file"]::-webkit-file-upload-button:hover {
+    border-color: var(--color-primary-light);
+    background-color: var(--color-primary-light);
+}
+
+select:focus,
+input:focus {
+    outline: none;
+    border-color: var(--color-focus);
+
+    &:not([type="file"]) {
+        background-color: var(--color-focus-light);
+    }
 
     &::file-selector-button {
-        display: none;
+        border-color: var(--color-focus);
+        background-color: var(--color-focus-light);
     }
+}
+
+select {
+    &:hover {
+        border-color: var(--color-primary-light);
+        background-color: var(--color-primary-light);
+    }
+
+    &:focus {
+        border-color: var(--color-focus);
+
+        &:hover,
+        &:active {
+            border-color: var(--color-primary-light);
+            background-color: white;
+        }
+    }
+
+    &:focus-visible {
+        border-color: var(--color-primary-light);
+        background-color: white;
+    }
+}
+
+a:focus {
+    outline: 2px solid var(--color-focus);
 }
 
 input[disabled] {
@@ -81,12 +160,7 @@ input[disabled]:hover {
     color: white
 }
 
-input:hover {
-    border-color: #88a7ff;
-    background-color: #88a7ff;
-}
-
-footer{
+footer {
     text-align: center;
     align-content: end;
     border-top: 1px solid lightgray;
@@ -94,7 +168,7 @@ footer{
 
 .flow {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     align-items: stretch;
     justify-content: stretch;
     gap: 32px;
@@ -107,9 +181,9 @@ footer{
 }
 
 .error#notification {
-    color: crimson;
+    color: var(--color-error);
 }
 
 .success#notification {
-    color: forestgreen;
+    color: var(--color-success);
 }
