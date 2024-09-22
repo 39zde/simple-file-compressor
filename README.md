@@ -1,7 +1,7 @@
 # Simple File Compressor
 A tool to reduce the file size of your files. Free online, local, tracking-free, advert-free file compression. Simple and fast.
 
-Now, that the following browser features are widely available: 
+Now, that the following browser features are implemented by the major vendors: 
 
 - [Resizable ArrayBuffers](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer/resizable#browser_compatibility) (since July 2024)
 - [transfer ArrayBuffer to a fixed length](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer/transferToFixedLength#browser_compatibility) (since March 2024)
@@ -10,7 +10,7 @@ Now, that the following browser features are widely available:
 nothing stands in the way of selecting a file, compressing it with the [CompressionStream API](https://developer.mozilla.org/en-US/docs/Web/API/CompressionStream), creating an archive and downloading it.
 
 For now there are two formats supported: `gzip` and `deflate`, with no control over compression strength. 
-In the future this API might be expanded to `brotli` and `zstd`[^1],[^2],[^3].
+In the future this API might be expanded to finer controls and the formats `brotli` and `zstd`[^1],[^2],[^3].
 
 Try it here: [File Compressor](https://39zde.github.io/simple-file-compressor/)
 
