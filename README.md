@@ -10,6 +10,7 @@ Now, that the following browser features are widely available:
 nothing stands in the way of selecting a file, compressing it with the [CompressionStream API](https://developer.mozilla.org/en-US/docs/Web/API/CompressionStream), creating an archive and downloading it.
 
 For now there are two formats supported: `gzip` and `deflate`, with no control over compression strength. 
+In the future this API might be expanded to `brotli` and `zstd`[^1],[^2],[^3].
 
 Try it here: [File Compressor](https://39zde.github.io/simple-file-compressor/)
 
@@ -17,3 +18,9 @@ Try it here: [File Compressor](https://39zde.github.io/simple-file-compressor/)
 - To which one might reply: `Yes`
 
 Spread the word and star this repo. That's all, thank you for your time.
+
+### Links
+
+[^1]: https://github.com/whatwg/compression/blob/main/explainer.md#future-work
+[^2]: https://github.com/whatwg/compression/issues/34
+[^3]: https://github.com/whatwg/compression/issues/54
