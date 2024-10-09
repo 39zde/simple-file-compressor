@@ -282,15 +282,20 @@ function displayMessage(element, type, msg) {
  * @param {string} fileInputID HTMLInputElement id attribute value for the file upload button
  * @param {string} compressionTypeInputID HTMLSelectElement id attribute value for the compression type selection
  * @param {string} startInputID HTMLInputElement id attribute value for the file action button
- * @param {string} messageOutputID
+ * @param {string} messageOutputID HTMLOutputElement id attribute value for the message output element
+ * @param {string} shortcutID HTMLDivElement id attribute value  for the hidden div inside of the aside element
+ * @param {string} shortcutToggle HTMLInputElement id attribute value for checkbox element to toggle the keyboard-shortcuts
  * @returns
  */
-function main(fileInputID, compressionTypeInputID, startInputID, messageOutputID) {
+function main(fileInputID, compressionTypeInputID, startInputID, messageOutputID, shortcutID, shortcutToggleID) {
 	const fileInput = document.getElementById(fileInputID);
 	const typeSelect = document.getElementById(compressionTypeInputID);
 	const actionInput = document.getElementById(startInputID);
 	const messageOutput = document.getElementById(messageOutputID);
-	if (fileInput == null || typeSelect == null || actionInput == null || messageOutput == null) {
+	const shortcutDiv = document.getElementById(shortcutID);
+	const shortcutToggle = document.getElementById(shortcutToggleID);
+	if (fileInput == null || typeSelect == null || actionInput == null || messageOutput == null || shortcutDiv == null || shortcutToggle == null) {
+		console.log("File Input: ", fileInput == null, "type select: ", typeSelect == null, "action input: ", actionInput == null, "message output: ", messageOutput == null, "shortcut-div", shortcutDiv == null, "short-cut toggle", shortcutToggle == null);
 		return console.error("failed to find input elements");
 	}
 
@@ -309,14 +314,12 @@ function main(fileInputID, compressionTypeInputID, startInputID, messageOutputID
 	messageOutput.addEventListener("click", () => {
 		displayMessage(messageOutput, "hide");
 	});
-
 	fileInput.addEventListener("input", () => {
 		// enable the action button
 		actionInput.removeAttribute("disabled");
 	});
-
-	// check for compression button clicks
 	actionInput.addEventListener("click", (event) => {
+		// check for compression button clicks
 		event.preventDefault();
 		// set the notification-style to progress
 		displayMessage(messageOutput, "progress", "Starting...");
@@ -336,10 +339,18 @@ function main(fileInputID, compressionTypeInputID, startInputID, messageOutputID
 			}
 		}
 	});
+	shortcutToggle.addEventListener("input", () => {
+		// on toggle sidebar
+		if (shortcutDiv.ariaHidden === "true") {
+			shortcutDiv.ariaHidden = "false";
+		} else {
+			shortcutDiv.ariaHidden = "true";
+		}
+	});
 }
 
 // execute main, once the document has loaded
 document.addEventListener("DOMContentLoaded", () => {
-	const elementIDs = ["compression-file-input", "compression-type-input", "compression-start-input", "notification"];
-	main(elementIDs[0], elementIDs[1], elementIDs[2], elementIDs[3]);
+	const elementIDs = ["compression-file-input", "compression-type-input", "compression-start-input", "notification", "shortcuts", "toggle-shortcuts"];
+	main(elementIDs[0], elementIDs[1], elementIDs[2], elementIDs[3], elementIDs[4], elementIDs[5]);
 });

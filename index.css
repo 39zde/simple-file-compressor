@@ -102,7 +102,7 @@ aside {
 }
 
 
-.open-shortcuts-label {
+.toggle-shortcuts-label {
     width: var(--shortcut-list-handle-width);
     max-width: var(--shortcut-list-handle-width);
     height: 100%;
@@ -120,7 +120,7 @@ aside {
         background: var(--color-gray-light);
     }
 
-    &>#open-shortcuts {
+    &>#toggle-shortcuts {
         appearance: none;
         max-width: var(--shortcut-list-handle-width);
 
@@ -128,7 +128,7 @@ aside {
 }
 
 
-.open-shortcuts-label:has(#open-shortcuts:not(:checked))::before {
+.toggle-shortcuts-label:has(#toggle-shortcuts:not(:checked))::before {
     content: " 🢒 ";
     text-align: center;
     font-size: 36px;
@@ -142,7 +142,7 @@ aside {
     margin: auto 0;
 }
 
-.open-shortcuts-label:has(#open-shortcuts:checked)::before {
+.toggle-shortcuts-label:has(#toggle-shortcuts:checked)::before {
     content: " 🢐 ";
     text-align: center;
     font-size: 36px;
@@ -157,7 +157,7 @@ aside {
 
 }
 
-.shortcuts {
+#shortcuts {
     padding-left: 12px;
     flex-wrap: nowrap;
     width: var(--shortcut-list-width);
@@ -217,10 +217,10 @@ kbd {
     font-size: 16px;
 }
 
-aside:has(.open-shortcuts-label):has(#open-shortcuts:checked) {
+aside:has(.toggle-shortcuts-label):has(#toggle-shortcuts:checked) {
     width: var(--shortcut-width);
 
-    &>.shortcuts {
+    &>#shortcuts {
         display: flex;
     }
 }
@@ -271,7 +271,7 @@ output.progress#notification {
     Steps
 */
 
-div.steps {
+form.steps {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -281,7 +281,7 @@ div.steps {
 }
 
 
-div.steps>label {
+form.steps>label {
     box-shadow: var(--shadow);
     border-radius: 18px;
     height: fit-content;
@@ -302,13 +302,13 @@ div.steps>label {
 }
 
 @media screen and (width < 550px) {
-    div.steps>label {
+    form.steps>label {
         width: 90%;
     }
 }
 
 @media screen and (width >=550px) {
-    div.steps>label {
+    form.steps>label {
         min-width: 360px;
     }
 }

@@ -2,9 +2,10 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8" name="Simple File Compressor" lang="en-US,de-DE" http-equiv="Content-Security-Policy"
-        content="default-src 'none'; script-src 'self'; style-src 'self'; manifest-src 'self'; img-src 'self'"
+    <meta charset="UTF-8" name="Simple File Compressor" lang="en-US,de-DE"
         description="A tool to reduce the file size of your files. Free online, local, tracking-free, advert-free file compression. Simple and fast." />
+    <!-- <meta http-equiv="Content-Security-Policy"
+        content="default-src 'none'; script-src 'self'; style-src 'self'; manifest-src 'self'; img-src 'self'" /> -->
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes" />
     <link rel="stylesheet" type="text/css" href="index.css">
     <link rel="icon" href="icons/icon.svg" />
@@ -26,10 +27,11 @@
     </header>
     <main>
         <aside>
-            <label class="open-shortcuts-label" for="open-shortcuts" tabindex="-1" title="Show/Hide keyboard shortcuts">
-                <input id="open-shortcuts" type="checkbox">
+            <label class="toggle-shortcuts-label" for="toggle-shortcuts" tabindex="-1"
+                title="Show/Hide keyboard shortcuts">
+                <input id="toggle-shortcuts" type="checkbox">
             </label>
-            <div class="shortcuts">
+            <div id="shortcuts" aria-hidden="true">
                 <h3>Jump to Steps</h3>
                 <ul>
                     <li>
@@ -89,12 +91,12 @@
         <article>
             <output id="notification" aria-hidden="true" role="status">
             </output>
-            <div class="steps" role="list">
-                <label for="compression-file-input" tabindex="0" role="listitem" aria-keyshortcuts="1">
+            <form class="steps">
+                <label for="compression-file-input" tabindex="0" aria-keyshortcuts="1">
                     <h2>1. Select File(s)</h2>
                     <input type="file" id="compression-file-input" tabindex="-1" aria-keyshortcuts="o" multiple>
                 </label>
-                <label for="compression-type-input" tabindex="0" role="listitem" aria-keyshortcuts="2">
+                <label for="compression-type-input" tabindex="0" aria-keyshortcuts="2">
                     <h2>2. Select a compression type</h2>
                     <select id="compression-type-input" tabindex="-1" aria-keyshortcuts="s">
                         <option value="gzip">
@@ -105,11 +107,12 @@
                         </option>
                     </select>
                 </label>
-                <label for="compression-start-input" tabindex="0" role="listitem" aria-keyshortcuts="3">
+                <label for="compression-start-input" tabindex="0" aria-keyshortcuts="3">
                     <h2>3. Compress the file</h2>
-                    <input id="compression-start-input" type="button" value="Go" tabindex="-1" disabled>
+                    <input id="compression-start-input" type="button" value="Go" tabindex="-1" disabled
+                        aria-keyshortcuts="c">
                 </label>
-            </div>
+            </form>
         </article>
 
     </main>
