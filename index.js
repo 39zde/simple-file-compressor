@@ -1,166 +1,179 @@
-const compressionFileInput = document.getElementById("compression-file-input");
-const compressionTypeInput = document.getElementById("compression-type-input");
-const compressionStartInput = document.getElementById("compression-start-input");
-const message = document.getElementById("notification");
-
-// check if the browser is compatible
-checkBrowserCompatibility();
-
-//=======================
-//* add  event-listeners
-//=======================
-
-//1. accept keyboard input
-compressionFileInput.parentElement.addEventListener("keydown", (event) => {
-	event.preventDefault();
-	if (event.key === "Enter" || event.key === " " || event.key.toLowerCase() === "o") {
-		compressionFileInput.click();
-	} else if (event.key === "Tab") {
-		compressionTypeInput.parentElement.focus();
-	}
-});
-
-//2.  accept keyboard input
-compressionTypeInput.parentElement.addEventListener("keypress", (event) => {
-	event.preventDefault();
-	if (event.key === "Enter" || event.key === "ArrowDown" || event.key === "ArrowUp") {
-		nextCompressionType();
-	} else if (event.key === "Tab") {
-		compressionStartInput.parentElement.focus();
-	}
-});
-
-//3. accept keyboard input
-compressionStartInput.parentElement.addEventListener("keypress", (event) => {
-	event.preventDefault();
-	if (event.key === "Enter") {
-		compressionStartInput.click();
-	}
-});
-
-// detect if a file has been detected
-compressionFileInput.addEventListener("input", () => {
-	// enable the compress button
-	compressionStartInput.removeAttribute("disabled");
-});
-
-// check for compression button clicks
-compressionStartInput.addEventListener("click", (event) => {
-	event.preventDefault();
-	// set the notification-style to progress
-	displayMessage("progress", "Starting...");
-	for (const file of compressionFileInput.files) {
-		// compress the file
-		compressFile({ file: file, compression: compressionTypeInput.value });
-	}
-});
-
-// discard message on click
-message.addEventListener("click", () => {
-	message.removeAttribute("class");
-	message.setAttribute("aria-hidden", "true");
-	message.innerText = "";
-});
-
-// document wide event listeners
-document.addEventListener("keydown", (event) => {
-	switch (event.key) {
-		case "1":
-			event.preventDefault();
-			compressionFileInput.parentElement.focus();
-			break;
-		case "2":
-			event.preventDefault();
-			compressionTypeInput.parentElement.focus();
-			break;
-		case "3":
-			event.preventDefault();
-			compressionStartInput.parentElement.focus();
-			break;
-		case "o":
-			event.preventDefault();
-			compressionFileInput.parentElement.focus();
-			compressionFileInput.click();
-			break;
-		case "s":
-			event.preventDefault();
-			compressionTypeInput.parentElement.focus();
-			nextCompressionType();
-			break;
-		case "c":
-			event.preventDefault();
-			compressionStartInput.parentElement.focus();
-			compressionStartInput.click();
-			break;
-		default:
-			break;
-	}
-});
-
-//=======================
-//* define functions
-//=======================
-
+/**
+ * true if compatibility is ensured
+ * @returns boolean
+ */
 function checkBrowserCompatibility() {
 	if (!ArrayBuffer.prototype.hasOwnProperty("resizable") || window.CompressionStream === undefined || !ArrayBuffer.prototype.hasOwnProperty("transferToFixedLength")) {
 		message.setAttribute("class", "error");
 		message.innerText = "⚠️ Update Your Browser. This tool needs the latest features to function properly.";
+		return false;
+	}
+	return true;
+}
+
+/**
+ * performs click on key "Enter" on any child input element, from the event target
+ * performs focus change on key "Tab" to the next sibling  element
+ * @param {KeyboardEvent} event
+ */
+function keyDownClicker(event) {
+	event.preventDefault();
+	if (event.key === "Enter") {
+		let inputElement = event.target.queySelector("input");
+		if (inputElement) {
+			inputElement.click();
+		} else {
+			throw new Error(`Failed to find input-element`);
+		}
+	} else if (event.key === "Tab") {
+		if (event.target.nextElementSibling !== null) {
+			event.target.nextElementSibling.focus();
+		}
+	}
+}
+
+/**
+ * chooses the next option of the select element or loops back to the start
+ * @param {HTMLSelectElement} selectElement
+ */
+function cycler(selectElement) {
+	let selectOptions = selectElement.queySelectorAll("option");
+	let options = [];
+	for (const element of selectOptions) {
+		options.push(element.value);
+	}
+	if (options.includes(selectElement.value)) {
+		let index = options.indexOf(selectElement.value);
+		if (index + 1 === options.length) {
+			index = 0;
+		} else {
+			index = index + 1;
+		}
+		selectElement.value = options[index];
+	}
+}
+
+/**
+ * chooses the next option of the select element or loops back to the start on key "Enter" on any child input element, from the event target
+ * performs focus change on key "Tab" to the next sibling  element
+ * @param {KeyboardEvent} event
+ */
+function keyDownCycler(event) {
+	event.preventDefault();
+	if (event.key === "Enter") {
+		let selectElement = event.target.queySelector("select");
+		if (selectElement) {
+			cycler(selectElement);
+		} else {
+			throw new Error(`Failed to find select-element`);
+		}
+	} else if (event.key === "Tab") {
+		if (event.target.nextElementSibling !== null) {
+			event.target.nextElementSibling.focus();
+		}
+	}
+}
+
+/**
+ * adds keyboard shortcuts
+ * @param {KeyboardEvent} event
+ * @param {HTMLInputElement} fileElement
+ * @param {HTMLSelectElement} compressionElement
+ * @param {HTMLImageElement} actionElement
+ */
+function addKeyShortcuts(event, fileElement, compressionElement, actionElement) {
+	switch (event.key) {
+		case "1":
+			event.preventDefault();
+			fileElement.parentElement.focus();
+			break;
+		case "2":
+			event.preventDefault();
+			compressionElement.parentElement.focus();
+			break;
+		case "3":
+			event.preventDefault();
+			actionElement.parentElement.focus();
+			break;
+		case "o":
+			event.preventDefault();
+			fileElement.parentElement.focus();
+			fileElement.click();
+			break;
+		case "s":
+			event.preventDefault();
+			compressionElement.parentElement.focus();
+			cycler(compressionElement);
+			break;
+		case "c":
+			event.preventDefault();
+			actionElement.parentElement.focus();
+			actionElement.click();
+			break;
+		default:
+			break;
 	}
 }
 
 /**
  * creates a file and downloads it
  * @param {ArrayBuffer} buf the data in from of an ARrayBuffer
- * @param {"gzip" | "deflate" | string} status compression type or when uncompressed the mime type of the input file
+ * @param {"gzip" | "deflate" | "uncompressed"} compressionType compression type or when uncompressed the mime type of the input file
  * @param {string} fileName
- * @returns {void}
+ * @returns {Error | null}
  */
-function downloadFile(buf, status, fileName) {
+function downloadFile(buf, compressionType, fileName) {
 	try {
 		//create a new link
 		const link = document.createElement("a");
-		// create the file(Blob) and l
-
-		if (status === "deflate") {
-			link.href = URL.createObjectURL(new Blob([buf], { type: "application/zip" }));
-			link.download = fileName + ".zip";
-		} else if (status === "gzip") {
-			link.href = URL.createObjectURL(new Blob([buf], { type: "application/gzip" }));
-			link.download = fileName + ".gzip";
-		} else {
-			link.href = URL.createObjectURL(new Blob([buf], { type: status }));
-			link.download = fileName;
+		// create the file
+		switch (compressionType) {
+			case "deflate":
+				link.href = URL.createObjectURL(new Blob([buf], { type: "application/zip" }));
+				link.download = fileName + ".zip";
+				break;
+			case "gzip":
+				link.href = URL.createObjectURL(new Blob([buf], { type: "application/gzip" }));
+				link.download = fileName + ".gzip";
+				break;
+			case "uncompressed":
+				link.href = URL.createObjectURL(new Blob([buf]));
+				link.download = fileName;
+				break;
+			default:
+				return new Error(`⚠️ Unsupported compression type: ${compressionType}`);
 		}
+
 		// click the link / download the file
 		link.click();
 		// remove the file
 		URL.revokeObjectURL(link.href);
+		return null;
 	} catch (e) {
-		displayMessage("error", "⚠️ File has been compressed, but could not be downloaded");
 		console.error(e);
+		return new Error("⚠️ File has been created from given data");
 	}
 }
 
 /**
- *	compresses as given file
- * @param {{compression: "gzip" | "deflate", file: File}} params
- * @returns {void}
+ *	compresses a given file and downloads it
+ * @param {File} file
+ * @param {"gzip" | "deflate"} compressionType
+ * @param {HTMLOutputElement} messageOutput
+ * @returns {Error|void}
  */
-function compressFile(params) {
+function compressFile(file, compressionType, messageOutput) {
 	// check if the file is too small
-	if (params.file.size < 1000) {
-		// if so return the file to the download folder
-		return params.file.arrayBuffer().then((buf) => {
-			displayMessage("error", "⚠️ File is already so small, compressing it would increase the file size");
-			downloadFile(buf, params.file.type, params.file.name);
-		});
+	if (file.size < 1000) {
+		// if so return with error message
+		return displayMessage(messageOutput, "error", "⚠️ File is already so small, compressing it would increase the file size");
 	}
 	// create a stream from the file
-	const stream = params.file.stream();
+	const stream = file.stream();
 	// compress the stream
-	const readable = stream.pipeThrough(new CompressionStream(params.compression));
+	const readable = stream.pipeThrough(new CompressionStream(compressionType));
 	// create ArrayBuffer. must be resizable, because we don't know the compressed size. will hold the compressed data
-	let buffer = new ArrayBuffer(0, { maxByteLength: params.file.size });
+	let buffer = new ArrayBuffer(0, { maxByteLength: file.size });
 	// create a reader
 	const reader = readable.getReader();
 	// read the stream recursively
@@ -177,43 +190,156 @@ function compressFile(params) {
 					view.setUint8(currentLength + i, value.value[i]);
 				}
 				// update the progress
-				displayMessage("progress", `Progress: ${((buffer.byteLength / params.file.size) * 100).toFixed(2)} %`);
+				displayMessage(messageOutput, "progress", `Progress: ${((buffer.byteLength / file.size) * 100).toFixed(2)} %`);
 				// start over
 				reader.read().then(readCompressed);
 			}
 		} else {
-			// all data has been received
-			// display the success message
-			displayMessage("success", `✅ ${(params.file.size / 1000).toFixed(2)} kB  → ${(buffer.byteLength / 1000).toFixed(2)} kB ( - ${((1 - buffer.byteLength / params.file.size) * 100).toFixed(2)}%)`);
 			// download the file
-			downloadFile(buffer.transferToFixedLength(buffer.byteLength), params.compression, params.file.name);
+			const outputBuffer = buffer.transferToFixedLength(buffer.byteLength);
+			const result = downloadFile(outputBuffer, compressionType, file.name);
+			if (result !== null) {
+				displayMessage(messageOutput, "error", result.message);
+			} else {
+				displayMessage(messageOutput, "success", `✅ ${(file.size / 1000).toFixed(2)} kB  → ${(outputBuffer.byteLength / 1000).toFixed(2)} kB ( - ${((1 - outputBuffer.byteLength / file.size) * 100).toFixed(2)}%)`);
+			}
 		}
 	});
 }
 
 /**
- *
- * @param {"progress" | "success" | "error"} type
- * @param {string} message
+ *	decompresses a given file and downloads it
+ * @param {File} file
+ * @param {"gzip" | "deflate"} compressionType
+ * @param {HTMLOutputElement} messageOutput
+ * @returns {void}
  */
-function displayMessage(type, msg) {
-	message.setAttribute("aria-hidden", "false");
-	message.setAttribute("class", type);
-	message.innerText = msg;
+function decompressFile(file, compressionType, messageOutput) {
+	// create a stream from the file
+	const stream = file.stream();
+	// compress the stream
+	const readable = stream.pipeThrough(new DecompressionStream(compressionType));
+	// create ArrayBuffer. must be resizable, because we don't know the decompressed size.
+	// buffer will hold the decompressed data
+	let buffer = new ArrayBuffer(0, { maxByteLength: file.size * 2 });
+	// create a reader
+	const reader = readable.getReader();
+	// read the stream recursively
+	reader.read().then(function readDecompressed(value) {
+		if (!value.done) {
+			// if there is incoming data
+			if (buffer.resizable) {
+				let currentLength = buffer.byteLength;
+				// increase the buffer by the size of the incoming data
+				buffer.resize(buffer.byteLength + value.value.byteLength);
+				let view = new DataView(buffer);
+				for (let i = 0; i < value.value.byteLength; i++) {
+					// add the incoming data
+					view.setUint8(currentLength + i, value.value[i]);
+				}
+				// update the progress
+				displayMessage(messageOutput, "progress", `Progress: ${((buffer.byteLength / file.size) * 100).toFixed(2)} %`);
+				//start over
+				reader.read().then(readDecompressed);
+			}
+		} else {
+			// download the file
+			const outputBuffer = buffer.transferToFixedLength(buffer.byteLength);
+			const result = downloadFile(outputBuffer, "uncompressed", file.name.slice(0, file.name.lastIndexOf(".")));
+			if (result !== null) {
+				displayMessage(messageOutput, "error", result.message);
+			} else {
+				displayMessage(
+					messageOutput,
+					"success",
+					`✅ ${(file.size / 1000).toFixed(2)} kB  → ${(outputBuffer.byteLength / 1000).toFixed(2)} kB (successfully decompressed, file size increased by ${((1 - file.size / outputBuffer.byteLength) * 100).toFixed(2)}%)`
+				);
+			}
+		}
+	});
 }
 
 /**
- * selects the next compression type
+ * displays a message to an HTMLOutputElement via innerText
+ * @param {HTMLOutputElement} element
+ * @param {"progress" | "success" | "error" | "hide"} type
+ * @param {string | undefined} msg
  */
-function nextCompressionType() {
-	switch (document.getElementById("compression-type-input").value) {
-		case "gzip":
-			compressionTypeInput.value = "deflate";
-			break;
-		case "deflate":
-			compressionTypeInput.value = "gzip";
-			break;
-		default:
-			compressionTypeInput.value = "gzip";
+function displayMessage(element, type, msg) {
+	if (type !== "hide" && msg) {
+		element.setAttribute("aria-hidden", "false");
+		element.setAttribute("class", type);
+		element.innerText = msg;
+	} else {
+		element.setAttribute("aria-hidden", "true");
+		element.removeAttribute("class");
+		element.innerText = "";
 	}
 }
+
+/**
+ *
+ * @param {string} fileInputID HTMLInputElement id attribute value for the file upload button
+ * @param {string} compressionTypeInputID HTMLSelectElement id attribute value for the compression type selection
+ * @param {string} startInputID HTMLInputElement id attribute value for the file action button
+ * @param {string} messageOutputID
+ * @returns
+ */
+function main(fileInputID, compressionTypeInputID, startInputID, messageOutputID) {
+	const fileInput = document.getElementById(fileInputID);
+	const typeSelect = document.getElementById(compressionTypeInputID);
+	const actionInput = document.getElementById(startInputID);
+	const messageOutput = document.getElementById(messageOutputID);
+	if (fileInput == null || typeSelect == null || actionInput == null || messageOutput == null) {
+		return console.error("failed to find input elements");
+	}
+
+	const isCompatible = checkBrowserCompatibility();
+	if (!isCompatible) {
+		return displayMessage(messageOutput, "error", "⚠️ Update Your Browser. This tool needs the latest features to function properly.");
+	}
+
+	// add event listeners
+	document.addEventListener("keydown", (event) => {
+		addKeyShortcuts(event, fileInput, typeSelect, actionInput);
+	});
+	fileInput.parentElement.addEventListener("keydown", keyDownClicker);
+	typeSelect.parentElement.addEventListener("keydown", keyDownCycler);
+	actionInput.parentElement.addEventListener("keydown", keyDownClicker);
+	messageOutput.addEventListener("click", () => {
+		displayMessage(messageOutput, "hide");
+	});
+
+	fileInput.addEventListener("input", () => {
+		// enable the action button
+		actionInput.removeAttribute("disabled");
+	});
+
+	// check for compression button clicks
+	actionInput.addEventListener("click", (event) => {
+		event.preventDefault();
+		// set the notification-style to progress
+		displayMessage(messageOutput, "progress", "Starting...");
+		for (const file of fileInput.files) {
+			// get the file ending
+			let fileNameEnding = file.name;
+			fileNameEnding = fileNameEnding.slice(fileNameEnding.lastIndexOf(".") + 1, file.name.length);
+			// decompress or compress
+			if (fileNameEnding === "zip" || fileNameEnding == "gzip" || fileNameEnding == "gz") {
+				if (fileNameEnding === "zip") {
+					decompressFile(file, "deflate", messageOutput);
+				} else {
+					decompressFile(file, "gzip", messageOutput);
+				}
+			} else {
+				compressFile(file, typeSelect.value, messageOutput);
+			}
+		}
+	});
+}
+
+// execute main, once the document has loaded
+document.addEventListener("DOMContentLoaded", () => {
+	const elementIDs = ["compression-file-input", "compression-type-input", "compression-start-input", "notification"];
+	main(elementIDs[0], elementIDs[1], elementIDs[2], elementIDs[3]);
+});
