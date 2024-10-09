@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
     <meta charset="UTF-8" name="Simple File Compressor" lang="en-US,de-DE" http-equiv="Content-Security-Policy"
@@ -7,34 +7,95 @@
         description="A tool to reduce the file size of your files. Free online, local, tracking-free, advert-free file compression. Simple and fast." />
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes" />
     <link rel="stylesheet" type="text/css" href="index.css">
+    <link rel="icon" href="icons/icon.svg" />
+    <link rel="manifest" href="app.webmanifest" type="application/manifest+json">
     <title>
         Simple File Compressor - Reduce the file size of your files
     </title>
     <noscript>This site needs JavaScript to be enabled, since all the compression happens locally.</noscript>
 </head>
 
+
 <body>
-    <section>
-        <hgroup>
-            <h1>
-                Simple File Compressor
-            </h1>
-            <p>A local file compression tool.<br> All data stays on your machine.</p>
-            <small>Creates a Zip or Gzip Archive, from images, videos, PDFs or any other file type.</small>
-        </hgroup>
-        <main>
-            <span id="notification">
-            </span>
-            <div class="flow">
-                <label for="compression-file-input">
-                    <span>1. Select a file</span>
-                    <span class="file-upload">
-                        <input type="file" id="compression-file-input">
-                    </span>
+    <header>
+        <h1 role="heading">
+            Simple File Compressor
+        </h1>
+        <small>Creates a Zip or Gzip Archive, from any file type.</small>
+    </header>
+    <main>
+        <aside>
+            <label class="open-shortcuts-label" for="open-shortcuts" tabindex="-1" title="Show/Hide keyboard shortcuts">
+                <input id="open-shortcuts" type="checkbox">
+            </label>
+            <div class="shortcuts">
+                <h3>Jump to Steps</h3>
+                <ul>
+                    <li>
+                        <span class="letter-display">
+                            Step 1: Number
+                            <kbd>1</kbd>
+                        </span>
+                    </li>
+                    <li>
+                        <span class="letter-display">
+                            Step 2: Number
+                            <kbd>2</kbd>
+                        </span>
+                    </li>
+                    <li>
+                        <span class="letter-display">
+                            Step 3: Number
+                            <kbd>1</kbd>
+                        </span>
+                    </li>
+                </ul>
+                <h3>
+                    Select the next step
+                </h3>
+                <span class="letter-display">
+                    Tab:
+                    <kbd>⭲</kbd>
+                </span>
+                <h3>Perform action on focused element</h3>
+                <span class="letter-display">
+                    Enter:
+                    <kbd>↵</kbd>
+                </span>
+                <h3>Select a file</h3>
+                <span class="letter-display">
+                    Letter <b>O</b>scar:
+                    <kbd>
+                        o
+                    </kbd>
+                </span>
+                <h3>Select next compression type</h3>
+                <span class="letter-display">
+                    Letter <b>S</b>ierra:
+                    <kbd>
+                        s
+                    </kbd>
+                </span>
+                <h3>Compress the file</h3>
+                <span class="letter-display">
+                    Letter <b>C</b>harlie:
+                    <kbd>
+                        c
+                    </kbd>
+                </span>
+            </div>
+        </aside>
+        <article>
+            <output id="notification" aria-hidden="true" role="status">
+            </output>
+            <div class="steps" role="list">
+                <label for="compression-file-input" tabindex="0" role="listitem" aria-keyshortcuts="1">
+                    <h2>1. Select File(s)</h2>
+                    <input type="file" id="compression-file-input" tabindex="-1" aria-keyshortcuts="o" multiple>
                 </label>
-                <label for="compression-type-input">
-                    <span>2. Select a compression Type</span>
-                    <select id="compression-type-input">
+                <label for="compression-type-input" tabindex="0" role="listitem" aria-keyshortcuts="2">
+                    <h2>2. Select a compression type</h2>
+                    <select id="compression-type-input" tabindex="-1" aria-keyshortcuts="s">
                         <option value="gzip">
                             gzip
                         </option>
@@ -43,17 +104,19 @@
                         </option>
                     </select>
                 </label>
-                <label for="compression-start-input">
-                    <span>3. Compress the file</span>
-                    <input id="compression-start-input" type="button" value="Go" disabled>
+                <label for="compression-start-input" tabindex="0" role="listitem" aria-keyshortcuts="3">
+                    <h2>3. Compress the file</h2>
+                    <input id="compression-start-input" type="button" value="Go" tabindex="-1" disabled>
                 </label>
             </div>
-        </main>
-        <footer>
-            This site is open source. Check it out on <a href="https://github.com/39zde/simple-file-compressor"
-                target="_blank">Github &#8599</a>
-        </footer>
-    </section>
+        </article>
+
+    </main>
+    <footer>
+        This tool does not require an internet-connection.<br>
+        This site is open source. Check it out on <a href="https://github.com/39zde/simple-file-compressor"
+            target="_blank">Github &#8599</a>
+    </footer>
 </body>
 <script src="index.js"></script>
 

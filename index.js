@@ -4,10 +4,39 @@ const compressionStartInput = document.getElementById("compression-start-input")
 const message = document.getElementById("notification");
 
 // check if the browser is compatible
-if (!ArrayBuffer.prototype.hasOwnProperty("resizable") || window.CompressionStream === undefined || !ArrayBuffer.prototype.hasOwnProperty("transferToFixedLength")) {
-	message.setAttribute("class", "error");
-	message.innerText = "⚠️ Update Your Browser. This tool needs the latest features to function properly.";
-}
+checkBrowserCompatibility();
+
+//=======================
+//* add  event-listeners
+//=======================
+
+//1. accept keyboard input
+compressionFileInput.parentElement.addEventListener("keydown", (event) => {
+	event.preventDefault();
+	if (event.key === "Enter" || event.key === " " || event.key.toLowerCase() === "o") {
+		compressionFileInput.click();
+	} else if (event.key === "Tab") {
+		compressionTypeInput.parentElement.focus();
+	}
+});
+
+//2.  accept keyboard input
+compressionTypeInput.parentElement.addEventListener("keypress", (event) => {
+	event.preventDefault();
+	if (event.key === "Enter" || event.key === "ArrowDown" || event.key === "ArrowUp") {
+		nextCompressionType();
+	} else if (event.key === "Tab") {
+		compressionStartInput.parentElement.focus();
+	}
+});
+
+//3. accept keyboard input
+compressionStartInput.parentElement.addEventListener("keypress", (event) => {
+	event.preventDefault();
+	if (event.key === "Enter") {
+		compressionStartInput.click();
+	}
+});
 
 // detect if a file has been detected
 compressionFileInput.addEventListener("input", () => {
@@ -16,13 +45,68 @@ compressionFileInput.addEventListener("input", () => {
 });
 
 // check for compression button clicks
-compressionStartInput.addEventListener("click", () => {
-	// remove any class from message from previous compressions
-	message.removeAttribute("class");
-	message.innerText = "Starting...";
-	// compress the file
-	compressFile({ file: compressionFileInput.files[0], compression: compressionTypeInput.value });
+compressionStartInput.addEventListener("click", (event) => {
+	event.preventDefault();
+	// set the notification-style to progress
+	displayMessage("progress", "Starting...");
+	for (const file of compressionFileInput.files) {
+		// compress the file
+		compressFile({ file: file, compression: compressionTypeInput.value });
+	}
 });
+
+// discard message on click
+message.addEventListener("click", () => {
+	message.removeAttribute("class");
+	message.setAttribute("aria-hidden", "true");
+	message.innerText = "";
+});
+
+// document wide event listeners
+document.addEventListener("keydown", (event) => {
+	switch (event.key) {
+		case "1":
+			event.preventDefault();
+			compressionFileInput.parentElement.focus();
+			break;
+		case "2":
+			event.preventDefault();
+			compressionTypeInput.parentElement.focus();
+			break;
+		case "3":
+			event.preventDefault();
+			compressionStartInput.parentElement.focus();
+			break;
+		case "o":
+			event.preventDefault();
+			compressionFileInput.parentElement.focus();
+			compressionFileInput.click();
+			break;
+		case "s":
+			event.preventDefault();
+			compressionTypeInput.parentElement.focus();
+			nextCompressionType();
+			break;
+		case "c":
+			event.preventDefault();
+			compressionStartInput.parentElement.focus();
+			compressionStartInput.click();
+			break;
+		default:
+			break;
+	}
+});
+
+//=======================
+//* define functions
+//=======================
+
+function checkBrowserCompatibility() {
+	if (!ArrayBuffer.prototype.hasOwnProperty("resizable") || window.CompressionStream === undefined || !ArrayBuffer.prototype.hasOwnProperty("transferToFixedLength")) {
+		message.setAttribute("class", "error");
+		message.innerText = "⚠️ Update Your Browser. This tool needs the latest features to function properly.";
+	}
+}
 
 /**
  * creates a file and downloads it
@@ -52,15 +136,14 @@ function downloadFile(buf, status, fileName) {
 		// remove the file
 		URL.revokeObjectURL(link.href);
 	} catch (e) {
-		message.setAttribute("class", "error");
-		message.innerText = "⚠️ File has been compressed, but could not be downloaded";
+		displayMessage("error", "⚠️ File has been compressed, but could not be downloaded");
 		console.error(e);
 	}
 }
 
 /**
  *	compresses as given file
- * @param {{compression: "gzip" | "deflate",file: File}} params
+ * @param {{compression: "gzip" | "deflate", file: File}} params
  * @returns {void}
  */
 function compressFile(params) {
@@ -68,8 +151,7 @@ function compressFile(params) {
 	if (params.file.size < 1000) {
 		// if so return the file to the download folder
 		return params.file.arrayBuffer().then((buf) => {
-			message.setAttribute("class", "error");
-			message.innerText = "⚠️ File is already so small, compressing it would increase the file size";
+			displayMessage("error", "⚠️ File is already so small, compressing it would increase the file size");
 			downloadFile(buf, params.file.type, params.file.name);
 		});
 	}
@@ -95,17 +177,43 @@ function compressFile(params) {
 					view.setUint8(currentLength + i, value.value[i]);
 				}
 				// update the progress
-				message.innerText = `Progress: ${((buffer.byteLength / params.file.size) * 100).toFixed(2)} %`;
+				displayMessage("progress", `Progress: ${((buffer.byteLength / params.file.size) * 100).toFixed(2)} %`);
 				// start over
 				reader.read().then(readCompressed);
 			}
 		} else {
 			// all data has been received
-			message.setAttribute("class", "success");
 			// display the success message
-			message.innerText = `✅ ${(params.file.size / 1000).toFixed(2)} kB  → ${(buffer.byteLength / 1000).toFixed(2)} kB ( - ${((1 - buffer.byteLength / params.file.size) * 100).toFixed(2)}%)`;
+			displayMessage("success", `✅ ${(params.file.size / 1000).toFixed(2)} kB  → ${(buffer.byteLength / 1000).toFixed(2)} kB ( - ${((1 - buffer.byteLength / params.file.size) * 100).toFixed(2)}%)`);
 			// download the file
 			downloadFile(buffer.transferToFixedLength(buffer.byteLength), params.compression, params.file.name);
 		}
 	});
+}
+
+/**
+ *
+ * @param {"progress" | "success" | "error"} type
+ * @param {string} message
+ */
+function displayMessage(type, msg) {
+	message.setAttribute("aria-hidden", "false");
+	message.setAttribute("class", type);
+	message.innerText = msg;
+}
+
+/**
+ * selects the next compression type
+ */
+function nextCompressionType() {
+	switch (document.getElementById("compression-type-input").value) {
+		case "gzip":
+			compressionTypeInput.value = "deflate";
+			break;
+		case "deflate":
+			compressionTypeInput.value = "gzip";
+			break;
+		default:
+			compressionTypeInput.value = "gzip";
+	}
 }
