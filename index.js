@@ -11,6 +11,24 @@ function checkBrowserCompatibility() {
 }
 
 /**
+ * @param {HTMLElement} parent
+ * @param {string} tagName
+ * @returns {HTMLElement[] | null}
+ */
+function selectChildrenOf(parent, tagName) {
+	let out = [];
+	for (const child of parent.children) {
+		if (child.tagName === tagName.toUpperCase()) {
+			out.push(child);
+		}
+	}
+	if (out.length !== 0) {
+		return out;
+	}
+	return null;
+}
+
+/**
  * performs click on key "Enter" on any child input element, from the event target
  * performs focus change on key "Tab" to the next sibling  element
  * @param {KeyboardEvent} event
@@ -18,15 +36,9 @@ function checkBrowserCompatibility() {
 function keyDownClicker(event) {
 	event.preventDefault();
 	if (event.key === "Enter") {
-		let inputElement;
-		for (const elem of event.target.children) {
-			if (elem.tagName === "INPUT") {
-				inputElement = elem;
-				break;
-			}
-		}
+		const inputElement = selectChildrenOf(event.target, "INPUT");
 		if (inputElement) {
-			inputElement.click();
+			inputElement[0].click();
 		} else {
 			throw new Error(`Failed to find input-element`);
 		}
@@ -48,12 +60,8 @@ function keyDownClicker(event) {
  * @param {HTMLSelectElement} selectElement
  */
 function cycler(selectElement) {
-	let selectOptions = selectElement.queySelectorAll("option");
-	let options = [];
-	for (const element of selectOptions) {
-		options.push(element.value);
-	}
-	if (options.includes(selectElement.value)) {
+	const options = selectChildrenOf(selectElement, "OPTION");
+	if (options && options.includes(selectElement.value)) {
 		let index = options.indexOf(selectElement.value);
 		if (index + 1 === options.length) {
 			index = 0;
@@ -72,15 +80,9 @@ function cycler(selectElement) {
 function keyDownCycler(event) {
 	event.preventDefault();
 	if (event.key === "Enter") {
-		let selectElement;
-		for (const elem of event.target.children) {
-			if (elem.tagName === "SELECT") {
-				selectElement = elem;
-				break;
-			}
-		}
+		let selectElement = selectChildrenOf(event.target, "SELECT");
 		if (selectElement) {
-			cycler(selectElement);
+			cycler(selectElement[0]);
 		} else {
 			throw new Error(`Failed to find select-element`);
 		}
