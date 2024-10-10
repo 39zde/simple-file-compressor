@@ -80,7 +80,7 @@ function cycler(selectElement) {
  */
 function keyDownCycler(event) {
 	event.preventDefault();
-	if (event.key === "Enter") {
+	if (event.key === "Enter" || event.key === " ") {
 		let selectElement = selectChildrenOf(event.target, "SELECT");
 		if (selectElement) {
 			cycler(selectElement[0]);
