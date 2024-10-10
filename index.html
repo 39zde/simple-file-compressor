@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <!-- Source Code available on GitHub at https://github.com/39zde/simple-file-compressor -->
+
 <head>
     <link rel="preload" type="text/css" href="index.css" fetchpriority="high" referrerpolicy="no-referrer" as="style" />
     <meta charset="UTF-8" name="Simple File Compressor" lang="en-US" />
     <meta name="description"
         content="A tool to reduce the file size of your files. Free online, local, tracking-free, advert-free file compression. Simple and fast." />
     <meta http-equiv="Content-Security-Policy"
-        content="default-src 'none'; script-src 'self'; style-src 'self'; manifest-src 'self'; img-src 'self'" />
+        content="default-src 'none'; script-src 'self'; style-src 'self'; manifest-src 'self'; img-src 'self'; frame-ancestors 'none'; form-action 'none'; base-src 'none'" />
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes" />
     <noscript>This site needs JavaScript to be enabled, since all the compression happens locally.</noscript>
     <title>
@@ -19,6 +20,7 @@
     <link rel="stylesheet" type="text/css" href="index.css" fetchpriority="high" referrerpolicy="no-referrer" />
     <script referrerpolicy="no-referrer" defer type="module" src="index.js"></script>
 </head>
+
 <body>
     <header>
         <h1 role="heading">
@@ -27,7 +29,7 @@
         <small>Creates a Zip or Gzip Archive, from any file type.</small>
     </header>
     <main>
-        <aside aria-expanded="false" aria-details="Drawer,which shows the available keyboard shortcuts">
+        <aside aria-expanded="false" aria-describedby="Drawer,which shows the available keyboard shortcuts">
             <label class="toggle-shortcuts-label" for="toggle-shortcuts" tabindex="-1"
                 title="Show/Hide keyboard shortcuts">
                 <input id="toggle-shortcuts" type="checkbox" aria-controls="shortcuts" role="checkbox"
@@ -94,14 +96,12 @@
             <output id="notification" aria-hidden="true" role="status">
             </output>
             <form class="steps">
-                <label for="compression-file-input" tabindex="0" title="1. File Selection" role="combobox"
-                    aria-keyshortcuts="1" aria-controls="compression-file-input"
+                <label for="compression-file-input" tabindex="0" title="1. File Selection" aria-keyshortcuts="1"
                     aria-describedby="Step 1: File Upload. Press 1 to focus, then press 'Enter' or 'o' to open the file explorer to pick one or more files">
                     <h2>1. File Selection</h2>
                     <input tabindex="-1" type="file" multiple id="compression-file-input" aria-keyshortcuts="o">
                 </label>
-                <label for="compression-type-input" tabindex="0" title="2. Compression Type" role="checkbox"
-                    aria-keyshortcuts="2"
+                <label for="compression-type-input" tabindex="0" title="2. Compression Type" aria-keyshortcuts="2"
                     aria-describedby="Step 2: Compression type selection. Press 2 to focus, then press 'Enter' or 's' to cycle through the available options">
                     <h2>2. Compression Type</h2>
                     <select id="compression-type-input" tabindex="-1" aria-keyshortcuts="s">
@@ -113,11 +113,11 @@
                         </option>
                     </select>
                 </label>
-                <label for="compression-start-input" tabindex="0" title="3. Start" role="combobox" aria-keyshortcuts="3"
+                <label for="compression-start-input" tabindex="0" title="3. Start" aria-keyshortcuts="3"
                     aria-describedby="Step 3: Start the compression. Press 3 to focus, then press 'Enter' or 'c' to compress or decompress the selected files. Decopmression ignores the compression type input and picks the correct format, if supported. Processed files will be saved to the download folder.">
                     <h2>3. Start</h2>
                     <input id="compression-start-input" type="button" value="Go" tabindex="-1" disabled
-                        aria-keyshortcuts="c" aria-activedescendant="compression-start-input-label">
+                        aria-keyshortcuts="c">
                 </label>
             </form>
         </article>
@@ -129,4 +129,5 @@
             referrerpolicy="no-referrer" target="_blank">Github &#8599</a>
     </footer>
 </body>
+
 </html>
