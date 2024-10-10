@@ -22,10 +22,10 @@ Spread the word and star this repo. That's all, thank you for your time.
 
 ### Development
 
-I'd like to keep this project free from packages and that sort. This also means no devtools, package.json, no TypeScript, no versioning. Given the project size (in the future and now) none of this would be worth the hasse. Only native browser features. 
-The 2 exceptions to this are:
-- the use of JsDoc[^4], because it improves the readability, most IDE support it and it's so simple and non-invasive. 
-- the implementation of `Progressive Web Apps (PWA)`[^5]. Although it's a native browser feature, platform and browser conditions are lacking, to say the least. So I see why one might consider this a violation of 'keep it as simple as possible'. Nonetheless I wanted to give users the possibility to install this app. 
+I'd like to keep this project free from dependencies. This also means no devtools, no package.json, no TypeScript, no versioning. Given the project size (in the future and now) none of this would be worth it.
+There are 2 points, which I declare as  exceptions:
+- the use of JsDoc[^4], because it improves the readability, most IDE support it completely lives inside of comments. It's plain and simple, therefore worth it. 
+- the implementation of `Progressive Web Apps (PWA)`[^5]. Although it's a native browser feature, platform and browser conditions are lacking, to say the least. So I see why one might consider this as a violation of 'keep it as simple as possible'. Nonetheless I wanted to give users the possibility to install this app, if by chance the environment supports it. If it becomes to much of a hassle to keep up with the state of PWA, then I am going to drop it at once.
 
 ### Links
 
