@@ -1,3 +1,4 @@
+[![pages-build-deployment](https://github.com/39zde/simple-file-compressor/actions/workflows/pages/pages-build-deployment/badge.svg?branch=main)](https://github.com/39zde/simple-file-compressor/actions/workflows/pages/pages-build-deployment)
 # Simple File Compressor
 A tool to reduce the file size of your files. Free no-dependency, local, tracking-free, advert-free file compression and decompression. Simple and fast.
 
