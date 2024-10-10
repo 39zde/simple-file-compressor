@@ -26,8 +26,14 @@ function keyDownClicker(event) {
 			throw new Error(`Failed to find input-element`);
 		}
 	} else if (event.key === "Tab") {
-		if (event.target.nextElementSibling !== null) {
-			event.target.nextElementSibling.focus();
+		if (event.shiftKey) {
+			if (event.target.previousElementSibling !== null) {
+				event.target.previousElementSibling.focus();
+			}
+		} else {
+			if (event.target.nextElementSibling !== null) {
+				event.target.nextElementSibling.focus();
+			}
 		}
 	}
 }
@@ -68,8 +74,14 @@ function keyDownCycler(event) {
 			throw new Error(`Failed to find select-element`);
 		}
 	} else if (event.key === "Tab") {
-		if (event.target.nextElementSibling !== null) {
-			event.target.nextElementSibling.focus();
+		if (event.shiftKey) {
+			if (event.target.previousElementSibling !== null) {
+				event.target.previousElementSibling.focus();
+			}
+		} else {
+			if (event.target.nextElementSibling !== null) {
+				event.target.nextElementSibling.focus();
+			}
 		}
 	}
 }
