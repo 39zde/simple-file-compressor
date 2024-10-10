@@ -18,7 +18,10 @@ function checkBrowserCompatibility() {
 function keyDownClicker(event) {
 	event.preventDefault();
 	if (event.key === "Enter") {
-		let inputElement = this.queySelector("input");
+		let labelElement = event.target;
+		let inputElement = labelElement.queySelector("input");
+		console.log(labelElement);
+		console.log(inputElement);
 		if (inputElement) {
 			inputElement.click();
 		} else {
@@ -122,7 +125,7 @@ function addKeyShortcuts(event, fileElement, compressionElement, actionElement) 
 			actionElement.click();
 			break;
 		default:
-			break;
+			return;
 	}
 }
 
