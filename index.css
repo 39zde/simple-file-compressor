@@ -249,7 +249,7 @@ aside:has(.toggle-shortcuts-label):has(#toggle-shortcuts:checked) {
     }
 }
 
-@media (prefers-reduced-motion) or (prefers-reduced-data),
+@media (prefers-reduced-motion),
 (max-aspect-ratio: 1/1) and (width < 750px) {
     aside {
         display: none;
