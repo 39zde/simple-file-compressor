@@ -35,7 +35,7 @@ function selectChildrenOf(parent, tagName) {
  */
 function keyDownClicker(event) {
 	event.preventDefault();
-	if (event.key === "Enter") {
+	if (event.key === "Enter" || event.key === " ") {
 		const inputElement = selectChildrenOf(event.target, "INPUT");
 		if (inputElement) {
 			inputElement[0].click();
@@ -61,6 +61,7 @@ function keyDownClicker(event) {
  */
 function cycler(selectElement) {
 	const options = selectChildrenOf(selectElement, "OPTION");
+	console.log(options)
 	if (options && options.includes(selectElement.value)) {
 		let index = options.indexOf(selectElement.value);
 		if (index + 1 === options.length) {
