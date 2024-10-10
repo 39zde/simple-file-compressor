@@ -18,10 +18,13 @@ function checkBrowserCompatibility() {
 function keyDownClicker(event) {
 	event.preventDefault();
 	if (event.key === "Enter") {
-		let labelElement = event.target;
-		let inputElement = labelElement.queySelector("input");
-		console.log(labelElement);
-		console.log(inputElement);
+		let inputElement;
+		for (const elem of event.target.children) {
+			if (elem.tagName === "INPUT") {
+				inputElement = elem;
+				break;
+			}
+		}
 		if (inputElement) {
 			inputElement.click();
 		} else {
@@ -69,7 +72,13 @@ function cycler(selectElement) {
 function keyDownCycler(event) {
 	event.preventDefault();
 	if (event.key === "Enter") {
-		let selectElement = event.target.queySelector("select");
+		let selectElement;
+		for (const elem of event.target.children) {
+			if (elem.tagName === "SELECT") {
+				selectElement = elem;
+				break;
+			}
+		}
 		if (selectElement) {
 			cycler(selectElement);
 		} else {
