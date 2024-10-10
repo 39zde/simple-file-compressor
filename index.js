@@ -60,8 +60,8 @@ function keyDownClicker(event) {
  * @param {HTMLSelectElement} selectElement
  */
 function cycler(selectElement) {
-	const options = selectChildrenOf(selectElement, "OPTION");
-	console.log(options)
+	let options = selectChildrenOf(selectElement, "OPTION");
+	options = options.map((elem) => elem.value);
 	if (options && options.includes(selectElement.value)) {
 		let index = options.indexOf(selectElement.value);
 		if (index + 1 === options.length) {
@@ -82,7 +82,6 @@ function keyDownCycler(event) {
 	event.preventDefault();
 	if (event.key === "Enter") {
 		let selectElement = selectChildrenOf(event.target, "SELECT");
-		console.log(selectElement)
 		if (selectElement) {
 			cycler(selectElement[0]);
 		} else {
