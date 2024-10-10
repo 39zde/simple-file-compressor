@@ -176,7 +176,6 @@ function downloadFile(buf, compressionType, fileName) {
 		URL.revokeObjectURL(link.href);
 		return null;
 	} catch (e) {
-		console.error(e);
 		return new Error("File has been created from given data");
 	}
 }
@@ -233,7 +232,6 @@ function compressFile(file, compressionType, messageOutput) {
 			}
 		})
 		.catch((e) => {
-			console.error(e);
 			displayMessage(messageOutput, "error", e);
 		});
 }
@@ -290,12 +288,11 @@ function decompressFile(file, compressionType, messageOutput) {
 			}
 		})
 		.catch((e) => {
-			console.error(e);
 			displayMessage(messageOutput, "error", e);
 		});
 }
 
-/**
+/**f
  * displays a message to an HTMLOutputElement via innerText
  * @param {HTMLOutputElement} element
  * @param {"progress" | "success" | "error" | "hide"} type
@@ -345,7 +342,8 @@ function main(fileInputID, compressionTypeInputID, startInputID, messageOutputID
 	const shortcutToggle = document.getElementById(shortcutToggleID);
 	if (fileInput == null || typeSelect == null || actionInput == null || messageOutput == null || shortcutDiv == null || shortcutToggle == null) {
 		// console.log("File Input: ", fileInput == null, "type select: ", typeSelect == null, "action input: ", actionInput == null, "message output: ", messageOutput == null, "shortcut-div", shortcutDiv == null, "short-cut toggle", shortcutToggle == null);
-		return console.error("failed to find input elements");
+		// return console.error("failed to find input elements");
+		return;
 	}
 
 	const isCompatible = checkBrowserCompatibility();
