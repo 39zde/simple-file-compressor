@@ -372,8 +372,12 @@ function main(fileInputID, compressionTypeInputID, startInputID, messageOutputID
 		// on toggle sidebar
 		if (shortcutDiv.ariaHidden === "true") {
 			shortcutDiv.ariaHidden = "false";
+			shortcutDiv.parentElement.ariaExpanded = "true";
+			shortcutToggle.ariaChecked = "false";
 		} else {
 			shortcutDiv.ariaHidden = "true";
+			shortcutDiv.parentElement.ariaExpanded = "false";
+			shortcutToggle.ariaChecked = "true";
 		}
 	});
 }

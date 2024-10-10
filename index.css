@@ -24,7 +24,7 @@
 @media screen and (prefers-color-scheme: light) {
     :root {
         --color-light: #FAF9F6;
-        --color-gray: #82817d;
+        --color-gray: hsl(48, 2%, 40%);
         --color-gray-light: color-mix(in hsl, var(--color-gray) 20%, #ffffff00 80%);
         --color-dark: #010613;
 
@@ -35,7 +35,7 @@
 @media screen and (prefers-color-scheme: dark) {
     :root {
         --color-light: #010613;
-        --color-gray: #82817d;
+        --color-gray: hsl(48, 2%, 60%);
         --color-gray-light: color-mix(in hsl, var(--color-gray) 20%, #00000000 80%);
         --color-dark: #FAF9F6;
 
@@ -84,7 +84,7 @@ h2 {
 }
 
 a {
-    color: var(--color-primary-light);
+    color: var(--color-primary);
     text-decoration: underline;
 }
 

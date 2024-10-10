@@ -28,10 +28,11 @@
         <small>Creates a Zip or Gzip Archive, from any file type.</small>
     </header>
     <main>
-        <aside>
+        <aside aria-expanded="false" aria-details="Drawer,which shows the available keyboard shortcuts">
             <label class="toggle-shortcuts-label" for="toggle-shortcuts" tabindex="-1"
                 title="Show/Hide keyboard shortcuts">
-                <input id="toggle-shortcuts" type="checkbox">
+                <input id="toggle-shortcuts" type="checkbox" aria-controls="shortcuts" role="checkbox"
+                    aria-checked="false">
             </label>
             <div id="shortcuts" aria-hidden="true">
                 <h3>Jump to Steps</h3>
@@ -94,12 +95,16 @@
             <output id="notification" aria-hidden="true" role="status">
             </output>
             <form class="steps">
-                <label for="compression-file-input" tabindex="0" aria-keyshortcuts="1">
-                    <h2>1. Select File(s)</h2>
-                    <input type="file" id="compression-file-input" tabindex="-1" aria-keyshortcuts="o" multiple>
+                <label for="compression-file-input" tabindex="0" title="1. File Selection" role="combobox"
+                    aria-keyshortcuts="1" aria-controls="compression-file-input"
+                    aria-describedby="Step 1: File Upload. Press 1 to focus, then press 'Enter' or 'o' to open the file explorer to pick one or more files">
+                    <h2>1. File Selection</h2>
+                    <input tabindex="-1" type="file" multiple id="compression-file-input" aria-keyshortcuts="o">
                 </label>
-                <label for="compression-type-input" tabindex="0" aria-keyshortcuts="2">
-                    <h2>2. Select a compression type</h2>
+                <label for="compression-type-input" tabindex="0" title="2. Compression Type" role="checkbox"
+                    aria-keyshortcuts="2"
+                    aria-describedby="Step 2: Compression type selection. Press 2 to focus, then press 'Enter' or 's' to cycle through the available options">
+                    <h2>2. Compression Type</h2>
                     <select id="compression-type-input" tabindex="-1" aria-keyshortcuts="s">
                         <option value="gzip">
                             gzip
@@ -109,10 +114,11 @@
                         </option>
                     </select>
                 </label>
-                <label for="compression-start-input" tabindex="0" aria-keyshortcuts="3">
-                    <h2>3. Compress the file</h2>
+                <label for="compression-start-input" tabindex="0" title="3. Start" role="combobox" aria-keyshortcuts="3"
+                    aria-describedby="Step 3: Start the compression. Press 3 to focus, then press 'Enter' or 'c' to compress or decompress the selected files. Decopmression ignores the compression type input and picks the correct format, if supported. Processed files will be saved to the download folder.">
+                    <h2>3. Start</h2>
                     <input id="compression-start-input" type="button" value="Go" tabindex="-1" disabled
-                        aria-keyshortcuts="c">
+                        aria-keyshortcuts="c" aria-activedescendant="compression-start-input-label">
                 </label>
             </form>
         </article>
