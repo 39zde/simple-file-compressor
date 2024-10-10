@@ -226,7 +226,7 @@ function decompressFile(file, compressionType, messageOutput) {
 	const readable = stream.pipeThrough(new DecompressionStream(compressionType));
 	// create ArrayBuffer. must be resizable, because we don't know the decompressed size.
 	// buffer will hold the decompressed data
-	let buffer = new ArrayBuffer(0, { maxByteLength: file.size * 4 });
+	let buffer = new ArrayBuffer(0, { maxByteLength: file.size * 8 });
 	// create a reader
 	const reader = readable.getReader();
 	// read the stream recursively
@@ -347,7 +347,6 @@ function main(fileInputID, compressionTypeInputID, startInputID, messageOutputID
 		// set the notification-style to progress
 		displayMessage(messageOutput, "progress", "Starting...");
 		for (const file of fileInput.files) {
-			console.log(file);
 			// decompress or compress
 			let fileNameEnding = file.name;
 			fileNameEnding = fileNameEnding.slice(fileNameEnding.lastIndexOf(".") + 1, file.name.length);
