@@ -306,8 +306,8 @@ form.steps {
     align-items: center;
     gap: var(--label-padding);
     width: 100%;
+    padding: var(--label-padding) 0;
 }
-
 
 form.steps>label {
     box-shadow: var(--shadow);
