@@ -1,5 +1,5 @@
 # Simple File Compressor
-A tool to reduce the file size of your files. Free online, local, tracking-free, advert-free file compression. Simple and fast.
+A tool to reduce the file size of your files. Free no-dependency, local, tracking-free, advert-free file compression and decompression. Simple and fast.
 
 Now, that the following browser features are implemented by the major vendors: 
 
@@ -19,8 +19,17 @@ Try it here: [File Compressor](https://39zde.github.io/simple-file-compressor/)
 
 Spread the word and star this repo. That's all, thank you for your time.
 
+### Development
+
+I'd like to keep this project free from packages and that sort. This also means no devtools, package.json, no TypeScript, no versioning. Given the project size (in the future and now) none of this would be worth the hasse. Only native browser features. 
+The 2 exceptions to this are:
+- the use of JsDoc[^4], because it improves the readability, most IDE support it and it's so simple and non-invasive. 
+- the implementation of `Progressive Web Apps (PWA)`[^5]. Although it's a native browser feature, platform and browser conditions are lacking, to say the least. So I see why one might consider this a violation of 'keep it as simple as possible'. Nonetheless I wanted to give users the possibility to install this app. 
+
 ### Links
 
 [^1]: https://github.com/whatwg/compression/blob/main/explainer.md#future-work
 [^2]: https://github.com/whatwg/compression/issues/34
 [^3]: https://github.com/whatwg/compression/issues/54
+[^4]: https://jsdoc.app/
+[^5]: https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps
