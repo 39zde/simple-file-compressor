@@ -1,11 +1,10 @@
 /**
  * true if compatibility is ensured
+ *
  * @returns boolean
  */
 function checkBrowserCompatibility() {
 	if (!ArrayBuffer.prototype.hasOwnProperty("resizable") || window.CompressionStream === undefined || !ArrayBuffer.prototype.hasOwnProperty("transferToFixedLength")) {
-		message.setAttribute("class", "error");
-		message.innerText = "Update Your Browser. This tool needs the latest features to function properly.";
 		return false;
 	}
 	return true;
@@ -19,7 +18,7 @@ function checkBrowserCompatibility() {
 function keyDownClicker(event) {
 	event.preventDefault();
 	if (event.key === "Enter") {
-		let inputElement = event.target.queySelector("input");
+		let inputElement = this.queySelector("input");
 		if (inputElement) {
 			inputElement.click();
 		} else {
