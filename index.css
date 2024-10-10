@@ -7,17 +7,40 @@
     --color-error: hsl(0, 55%, 66%);
     --color-success: #1fbf41;
 
-    --color-light: #FAF9F6;
-    --color-gray: #82817d;
-    --color-gray-light: color-mix(in hsl, var(--color-gray) 20%, #ffffff00 80%);
-    --color-dark: #010613;
-
-    --shadow: 0px 2px 6px -1px var(--color-gray);
-    --elevated: 0px 3px 7px -2px var(--color-gray);
+    --light: #FAF9F6;
+    --gray: #82817d;
+    --dark: #010613;
 
     --shortcut-list-width: 288px;
     --shortcut-list-handle-width: 20px;
     --shortcut-width: 320px;
+
+    --label-padding: 12px;
+    --label-min-width: 360px;
+    --input-min-width: 128px;
+    --input-height: 42px;
+}
+
+@media screen and (prefers-color-scheme: light) {
+    :root {
+        --color-light: #FAF9F6;
+        --color-gray: #82817d;
+        --color-gray-light: color-mix(in hsl, var(--color-gray) 20%, #ffffff00 80%);
+        --color-dark: #010613;
+
+        --shadow: 0px 2px 6px -1px var(--color-gray);
+    }
+}
+
+@media screen and (prefers-color-scheme: dark) {
+    :root {
+        --color-light: #010613;
+        --color-gray: #82817d;
+        --color-gray-light: color-mix(in hsl, var(--color-gray) 20%, #00000000 80%);
+        --color-dark: #FAF9F6;
+
+        --shadow: 0px 2px 3px 0px #3a3a3a;
+    }
 }
 
 html {
@@ -31,7 +54,6 @@ html {
     box-sizing: border-box;
 }
 
-
 body {
     height: 100vh;
     display: grid;
@@ -42,6 +64,7 @@ body {
 header {
     border-bottom: 1px solid var(--color-gray);
     text-align: center;
+    padding: 6px;
 
     &>small {
         color: var(--color-gray);
@@ -60,6 +83,11 @@ h2 {
     font-weight: 600;
 }
 
+a {
+    color: var(--color-primary-light);
+    text-decoration: underline;
+}
+
 main {
     display: flex;
     flex-direction: row;
@@ -68,7 +96,6 @@ main {
     flex-wrap: nowrap;
 }
 
-
 article {
     position: relative;
     display: flex;
@@ -76,7 +103,6 @@ article {
     align-items: center;
     justify-content: center;
     height: 100%;
-    min-width: 200px;
     width: 100%;
     transition: width 100ms linear;
     flex: 1;
@@ -85,7 +111,6 @@ article {
 /*
     Keyboard Shortcuts
 */
-
 
 aside {
     height: 100%;
@@ -100,7 +125,6 @@ aside {
     position: relative;
     overflow: hidden;
 }
-
 
 .toggle-shortcuts-label {
     width: var(--shortcut-list-handle-width);
@@ -127,11 +151,10 @@ aside {
     }
 }
 
-
 .toggle-shortcuts-label:has(#toggle-shortcuts:not(:checked))::before {
-    content: " 🢒 ";
+    content: "►";
     text-align: center;
-    font-size: 36px;
+    font-size: var(--shortcut-list-handle-width);
     position: absolute;
     color: var(--color-dark);
     height: var(--shortcut-list-handle-width);
@@ -143,9 +166,9 @@ aside {
 }
 
 .toggle-shortcuts-label:has(#toggle-shortcuts:checked)::before {
-    content: " 🢐 ";
+    content: "◄";
     text-align: center;
-    font-size: 36px;
+    font-size: var(--shortcut-list-handle-width);
     position: absolute;
     height: var(--shortcut-list-handle-width);
     width: var(--shortcut-list-handle-width);
@@ -167,13 +190,14 @@ aside {
     flex-direction: column;
     justify-content: center;
     align-items: flex-start;
-    /* border: 1px solid red; */
+    overflow-x: hidden;
     overflow: hidden;
     display: none;
 
     &>h3 {
         margin-bottom: 6px;
         margin-top: 12px;
+        text-decoration: underline;
     }
 
     &>ul {
@@ -197,9 +221,9 @@ span.letter-display {
 
     &>span {
         display: inline-flex;
+        text-decoration: none;
     }
 }
-
 
 kbd {
     display: flex;
@@ -208,7 +232,7 @@ kbd {
     border-radius: 4px;
     background: linear-gradient(-45deg, white, hsl(200, 22%, 86%));
     box-shadow: inset 0 -2px 0 0 hsl(200, 32%, 86%), inset 0 0 1px 1px white, 0 1px 2px 1px var(--color-gray);
-    color: var(--color-dark-1);
+    color: var(--dark);
     height: 18px;
     padding: 1px;
     width: 22px;
@@ -242,15 +266,18 @@ output#notification {
     border-width: 2px;
     border-style: solid;
     border-color: var(--color-light);
-    border-radius: 18px;
-    top: 12px;
+    border-radius: calc(var(--input-height) /2);
+    top: var(--label-padding);
     z-index: 10;
-    padding: 12px;
+    padding: var(--label-padding);
     height: fit-content;
     display: none;
     box-shadow: var(--shadow);
     cursor: pointer;
     background-color: var(--color-light);
+    text-align: center;
+    margin: var(--label-padding);
+    white-space: break-spaces;
 }
 
 output.error#notification {
@@ -277,14 +304,14 @@ form.steps {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 12px;
+    gap: var(--label-padding);
     width: 100%;
 }
 
 
 form.steps>label {
     box-shadow: var(--shadow);
-    border-radius: 18px;
+    border-radius: calc(var(--input-height) /2);
     height: fit-content;
     display: flex;
     flex-direction: column;
@@ -292,7 +319,7 @@ form.steps>label {
     justify-content: flex-start;
     gap: 12px;
     flex-wrap: nowrap;
-    padding: 12px;
+    padding: var(--label-padding);
     border: 2px solid var(--color-light);
 
     &:focus-visible,
@@ -310,7 +337,7 @@ form.steps>label {
 
 @media screen and (width >=550px) {
     form.steps>label {
-        min-width: 360px;
+        min-width: var(--label-min-width);
     }
 }
 
@@ -322,15 +349,16 @@ input[type="file"]#compression-file-input {
     display: flex;
     overflow: visible;
     outline: none;
-    height: 42px;
-    min-width: 128px;
+    height: var(--input-height);
+    min-width: var(--input-min-width);
     cursor: pointer;
+    max-width: calc(var(--label-min-width) - 2* var(--label-padding));
 
     &::-webkit-file-upload-button,
     &::file-selector-button {
-        height: 42px;
-        min-width: 128px;
-        border-radius: 21px;
+        height: var(--input-height);
+        min-width: var(--input-min-width);
+        border-radius: calc(var(--input-height) /2);
         border: 2px solid var(--color-primary);
         background-color: inherit;
         color: inherit;
@@ -356,9 +384,10 @@ input[type="file"]#compression-file-input {
 */
 
 select#compression-type-input {
-    height: 42px;
-    min-width: 128px;
-    border-radius: 21px;
+    height: var(--input-height);
+    ;
+    min-width: var(--input-min-width);
+    border-radius: calc(var(--input-height) /2);
     border: 2px solid var(--color-primary);
     background: var(--color-light);
     color: inherit;
@@ -373,9 +402,9 @@ select#compression-type-input {
 */
 
 input[type="button"]#compression-start-input {
-    height: 42px;
-    min-width: 128px;
-    border-radius: 21px;
+    height: var(--input-height);
+    min-width: var(--input-min-width);
+    border-radius: calc(var(--input-height) /2);
     border: 2px solid var(--color-primary);
     background-color: inherit;
     color: inherit;
@@ -402,4 +431,5 @@ footer {
     text-align: center;
     align-content: end;
     border-top: 1px solid var(--color-gray);
+    padding: 6px;
 }

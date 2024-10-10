@@ -5,7 +5,7 @@
 function checkBrowserCompatibility() {
 	if (!ArrayBuffer.prototype.hasOwnProperty("resizable") || window.CompressionStream === undefined || !ArrayBuffer.prototype.hasOwnProperty("transferToFixedLength")) {
 		message.setAttribute("class", "error");
-		message.innerText = "⚠️ Update Your Browser. This tool needs the latest features to function properly.";
+		message.innerText = "Update Your Browser. This tool needs the latest features to function properly.";
 		return false;
 	}
 	return true;
@@ -141,7 +141,7 @@ function downloadFile(buf, compressionType, fileName) {
 				link.download = fileName;
 				break;
 			default:
-				return new Error(`⚠️ Unsupported compression type: ${compressionType}`);
+				return new Error(`Unsupported compression type: ${compressionType}`);
 		}
 
 		// click the link / download the file
@@ -151,7 +151,7 @@ function downloadFile(buf, compressionType, fileName) {
 		return null;
 	} catch (e) {
 		console.error(e);
-		return new Error("⚠️ File has been created from given data");
+		return new Error("File has been created from given data");
 	}
 }
 
@@ -166,7 +166,7 @@ function compressFile(file, compressionType, messageOutput) {
 	// check if the file is too small
 	if (file.size < 1000) {
 		// if so return with error message
-		return displayMessage(messageOutput, "error", "⚠️ File is already so small, compressing it would increase the file size");
+		return displayMessage(messageOutput, "error", "File is already so small, compressing it would increase the file size");
 	}
 	// create a stream from the file
 	const stream = file.stream();
@@ -177,34 +177,39 @@ function compressFile(file, compressionType, messageOutput) {
 	// create a reader
 	const reader = readable.getReader();
 	// read the stream recursively
-	reader.read().then(function readCompressed(value) {
-		if (!value.done) {
-			// if there is incoming data
-			if (buffer.resizable) {
-				let currentLength = buffer.byteLength;
-				// increase the buffer by the size of the incoming data
-				buffer.resize(buffer.byteLength + value.value.byteLength);
-				let view = new DataView(buffer);
-				for (let i = 0; i < value.value.byteLength; i++) {
-					// add the incoming data
-					view.setUint8(currentLength + i, value.value[i]);
+	reader.read()
+		.then(function readCompressed(value) {
+			if (!value.done) {
+				// if there is incoming data
+				if (buffer.resizable) {
+					let currentLength = buffer.byteLength;
+					// increase the buffer by the size of the incoming data
+					buffer.resize(buffer.byteLength + value.value.byteLength);
+					let view = new DataView(buffer);
+					for (let i = 0; i < value.value.byteLength; i++) {
+						// add the incoming data
+						view.setUint8(currentLength + i, value.value[i]);
+					}
+					// update the progress
+					displayMessage(messageOutput, "progress", `Progress: ${((buffer.byteLength / file.size) * 100).toFixed(2)} %`);
+					// start over
+					reader.read().then(readCompressed);
 				}
-				// update the progress
-				displayMessage(messageOutput, "progress", `Progress: ${((buffer.byteLength / file.size) * 100).toFixed(2)} %`);
-				// start over
-				reader.read().then(readCompressed);
-			}
-		} else {
-			// download the file
-			const outputBuffer = buffer.transferToFixedLength(buffer.byteLength);
-			const result = downloadFile(outputBuffer, compressionType, file.name);
-			if (result !== null) {
-				displayMessage(messageOutput, "error", result.message);
 			} else {
-				displayMessage(messageOutput, "success", `✅ ${(file.size / 1000).toFixed(2)} kB  → ${(outputBuffer.byteLength / 1000).toFixed(2)} kB ( - ${((1 - outputBuffer.byteLength / file.size) * 100).toFixed(2)}%)`);
+				// download the file
+				const outputBuffer = buffer.transferToFixedLength(buffer.byteLength);
+				const result = downloadFile(outputBuffer, compressionType, file.name);
+				if (result !== null) {
+					displayMessage(messageOutput, "error", result.message);
+				} else {
+					displayMessage(messageOutput, "success", `${(file.size / 1000).toFixed(2)} kB  → ${(outputBuffer.byteLength / 1000).toFixed(2)} kB \n( - ${((1 - outputBuffer.byteLength / file.size) * 100).toFixed(2)}%)`);
+				}
 			}
-		}
-	});
+		})
+		.catch((e) => {
+			console.error(e);
+			displayMessage(messageOutput, "error", e);
+		});
 }
 
 /**
@@ -221,42 +226,47 @@ function decompressFile(file, compressionType, messageOutput) {
 	const readable = stream.pipeThrough(new DecompressionStream(compressionType));
 	// create ArrayBuffer. must be resizable, because we don't know the decompressed size.
 	// buffer will hold the decompressed data
-	let buffer = new ArrayBuffer(0, { maxByteLength: file.size * 2 });
+	let buffer = new ArrayBuffer(0, { maxByteLength: file.size * 4 });
 	// create a reader
 	const reader = readable.getReader();
 	// read the stream recursively
-	reader.read().then(function readDecompressed(value) {
-		if (!value.done) {
-			// if there is incoming data
-			if (buffer.resizable) {
-				let currentLength = buffer.byteLength;
-				// increase the buffer by the size of the incoming data
-				buffer.resize(buffer.byteLength + value.value.byteLength);
-				let view = new DataView(buffer);
-				for (let i = 0; i < value.value.byteLength; i++) {
-					// add the incoming data
-					view.setUint8(currentLength + i, value.value[i]);
+	reader.read()
+		.then(function readDecompressed(value) {
+			if (!value.done) {
+				// if there is incoming data
+				if (buffer.resizable) {
+					let currentLength = buffer.byteLength;
+					// increase the buffer by the size of the incoming data
+					buffer.resize(buffer.byteLength + value.value.byteLength);
+					let view = new DataView(buffer);
+					for (let i = 0; i < value.value.byteLength; i++) {
+						// add the incoming data
+						view.setUint8(currentLength + i, value.value[i]);
+					}
+					// update the progress
+					displayMessage(messageOutput, "progress", `Progress: ${((buffer.byteLength / file.size) * 100).toFixed(2)} %`);
+					//start over
+					reader.read().then(readDecompressed);
 				}
-				// update the progress
-				displayMessage(messageOutput, "progress", `Progress: ${((buffer.byteLength / file.size) * 100).toFixed(2)} %`);
-				//start over
-				reader.read().then(readDecompressed);
-			}
-		} else {
-			// download the file
-			const outputBuffer = buffer.transferToFixedLength(buffer.byteLength);
-			const result = downloadFile(outputBuffer, "uncompressed", file.name.slice(0, file.name.lastIndexOf(".")));
-			if (result !== null) {
-				displayMessage(messageOutput, "error", result.message);
 			} else {
-				displayMessage(
-					messageOutput,
-					"success",
-					`✅ ${(file.size / 1000).toFixed(2)} kB  → ${(outputBuffer.byteLength / 1000).toFixed(2)} kB (successfully decompressed, file size increased by ${((1 - file.size / outputBuffer.byteLength) * 100).toFixed(2)}%)`
-				);
+				// download the file
+				const outputBuffer = buffer.transferToFixedLength(buffer.byteLength);
+				const result = downloadFile(outputBuffer, "uncompressed", file.name.slice(0, file.name.lastIndexOf(".")));
+				if (result !== null) {
+					displayMessage(messageOutput, "error", result.message);
+				} else {
+					displayMessage(
+						messageOutput,
+						"success",
+						`${(file.size / 1000).toFixed(2)} kB  → ${(outputBuffer.byteLength / 1000).toFixed(2)} kB\n(successfully decompressed, file size increased by ${((1 - file.size / outputBuffer.byteLength) * 100).toFixed(2)}%)`
+					);
+				}
 			}
-		}
-	});
+		})
+		.catch((e) => {
+			console.error(e);
+			displayMessage(messageOutput, "error", e);
+		});
 }
 
 /**
@@ -269,7 +279,20 @@ function displayMessage(element, type, msg) {
 	if (type !== "hide" && msg) {
 		element.setAttribute("aria-hidden", "false");
 		element.setAttribute("class", type);
-		element.innerText = msg;
+		switch (type) {
+			case "error":
+				element.innerText = "⚠️ " + msg;
+				break;
+			case "progress":
+				element.innerText = "⏳ " + msg;
+				break;
+			case "success":
+				element.innerText = "✅ " + msg;
+				break;
+			default:
+				element.innerText = msg;
+				break;
+		}
 	} else {
 		element.setAttribute("aria-hidden", "true");
 		element.removeAttribute("class");
@@ -295,13 +318,13 @@ function main(fileInputID, compressionTypeInputID, startInputID, messageOutputID
 	const shortcutDiv = document.getElementById(shortcutID);
 	const shortcutToggle = document.getElementById(shortcutToggleID);
 	if (fileInput == null || typeSelect == null || actionInput == null || messageOutput == null || shortcutDiv == null || shortcutToggle == null) {
-		console.log("File Input: ", fileInput == null, "type select: ", typeSelect == null, "action input: ", actionInput == null, "message output: ", messageOutput == null, "shortcut-div", shortcutDiv == null, "short-cut toggle", shortcutToggle == null);
+		// console.log("File Input: ", fileInput == null, "type select: ", typeSelect == null, "action input: ", actionInput == null, "message output: ", messageOutput == null, "shortcut-div", shortcutDiv == null, "short-cut toggle", shortcutToggle == null);
 		return console.error("failed to find input elements");
 	}
 
 	const isCompatible = checkBrowserCompatibility();
 	if (!isCompatible) {
-		return displayMessage(messageOutput, "error", "⚠️ Update Your Browser. This tool needs the latest features to function properly.");
+		return displayMessage(messageOutput, "error", "Update Your Browser. This tool needs the latest features to function properly.");
 	}
 
 	// add event listeners
@@ -324,16 +347,22 @@ function main(fileInputID, compressionTypeInputID, startInputID, messageOutputID
 		// set the notification-style to progress
 		displayMessage(messageOutput, "progress", "Starting...");
 		for (const file of fileInput.files) {
-			// get the file ending
+			console.log(file);
+			// decompress or compress
 			let fileNameEnding = file.name;
 			fileNameEnding = fileNameEnding.slice(fileNameEnding.lastIndexOf(".") + 1, file.name.length);
-			// decompress or compress
-			if (fileNameEnding === "zip" || fileNameEnding == "gzip" || fileNameEnding == "gz") {
-				if (fileNameEnding === "zip") {
-					decompressFile(file, "deflate", messageOutput);
+			if (new RegExp(/(\.7z|\.zstd?|\.bz|\.tgz|\.tz|\.tar\.[\w]{0,}|\.bz2|\.br)$/gm).test(file.name)) {
+				if (file.name.includes("tar")) {
+					displayMessage(messageOutput, "error", `File extension .tar.${fileNameEnding} not supported.\nSelect a .zip or .gzip/.gz file instead`);
 				} else {
-					decompressFile(file, "gzip", messageOutput);
+					displayMessage(messageOutput, "error", `File extension ${fileNameEnding} not supported.\nSelect a .zip or .gzip/.gz file instead`);
 				}
+				continue;
+			}
+			if (file.type === "application/gzip" || file.type === "application/x-gzip" || fileNameEnding === "gz" || fileNameEnding == "gzip") {
+				decompressFile(file, "gzip", messageOutput);
+			} else if (file.type === "application/x-zip-compressed" || file.type === "application/zip" || file.type === "application/x-7z-compressed" || fileNameEnding == "zip") {
+				decompressFile(file, "deflate", messageOutput);
 			} else {
 				compressFile(file, typeSelect.value, messageOutput);
 			}

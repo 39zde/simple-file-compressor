@@ -1,22 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
+<!-- Source Code available on GitHub at https://github.com/39zde/simple-file-compressor -->
 
 <head>
     <meta charset="UTF-8" name="Simple File Compressor" lang="en-US,de-DE" />
-    <meta name="description" content="A tool to reduce the file size of your files. Free online, local, tracking-free, advert-free file compression. Simple and fast." />
-    <meta http-equiv="Content-Security-Policy"
-        content="default-src 'none'; script-src 'self'; style-src 'self'; manifest-src 'self'; img-src 'self'" />
+    <meta name="description"
+        content="A tool to reduce the file size of your files. Free online, local, tracking-free, advert-free file compression. Simple and fast." />
+    <!-- <meta http-equiv="Content-Security-Policy"
+        content="default-src 'none'; script-src 'self'; style-src 'self'; manifest-src 'self'; img-src 'self'" /> -->
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes" />
-    <link rel="stylesheet" type="text/css" href="index.css">
-    <link rel="icon" href="icons/icon.svg" />
-    <link rel="manifest" href="app.webmanifest" type="application/manifest+json">
+    <link rel="stylesheet" type="text/css" href="index.css" fetchpriority="high" referrerpolicy="no-referrer" />
+    <link rel="icon" href="icons/icon.svg" fetchpriority="low" referrerpolicy="no-referrer" />
+    <link rel="manifest" href="app.webmanifest" type="application/manifest+json" fetchpriority="low"
+        referrerpolicy="no-referrer" />
     <title>
         Simple File Compressor - Reduce the file size of your files
     </title>
     <noscript>This site needs JavaScript to be enabled, since all the compression happens locally.</noscript>
-    <script src="index.js"></script>
+    <script referrerpolicy="no-referrer" type="module" src="index.js"></script>
 </head>
-
 
 <body>
     <header>
@@ -60,7 +62,7 @@
                     Tab:
                     <kbd>⭲</kbd>
                 </span>
-                <h3>Perform action on focused element</h3>
+                <h3>Action on focused element</h3>
                 <span class="letter-display">
                     Enter:
                     <kbd>↵</kbd>
@@ -119,7 +121,7 @@
     <footer>
         This tool does not require an internet-connection.<br>
         This site is open source. Check it out on <a href="https://github.com/39zde/simple-file-compressor"
-            target="_blank">Github &#8599</a>
+            referrerpolicy="no-referrer" target="_blank">Github &#8599</a>
     </footer>
 </body>
 
