@@ -1,3 +1,5 @@
+"use strict";
+
 /**
  * true if compatibility is ensured
  *
