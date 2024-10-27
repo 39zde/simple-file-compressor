@@ -433,3 +433,7 @@ footer {
     border-top: 1px solid var(--color-gray);
     padding: 6px;
 }
+
+#save-html{
+    cursor: pointer;
+}

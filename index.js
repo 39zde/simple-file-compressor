@@ -146,30 +146,35 @@ function addKeyShortcuts(event, fileElement, compressionElement, actionElement) 
 /**
  * creates a file and downloads it
  * @param {ArrayBuffer} buf the data in from of an ARrayBuffer
- * @param {"gzip" | "deflate" | "uncompressed"} compressionType compression type or when uncompressed the mime type of the input file
+ * @param {string | null} mimeType compression type or when uncompressed the mime type of the input file
  * @param {string} fileName
  * @returns {Error | null}
  */
-function downloadFile(buf, compressionType, fileName) {
+function downloadFile(buf, mimeType, fileName) {
 	try {
 		//create a new link
 		const link = document.createElement("a");
 		// create the file
-		switch (compressionType) {
-			case "deflate":
+		switch (mimeType) {
+			case "application/zip":
 				link.href = URL.createObjectURL(new Blob([buf], { type: "application/zip" }));
 				link.download = fileName + ".zip";
 				break;
-			case "gzip":
+			case "application/gzip":
 				link.href = URL.createObjectURL(new Blob([buf], { type: "application/gzip" }));
 				link.download = fileName + ".gzip";
 				break;
-			case "uncompressed":
+			case null:
 				link.href = URL.createObjectURL(new Blob([buf]));
 				link.download = fileName;
 				break;
+			case "text/html":
+				console.log("html");
+				link.href = URL.createObjectURL(new Blob([buf]), { type: "text/html" });
+				link.download = fileName + ".html";
+				break;
 			default:
-				return new Error(`Unsupported compression type: ${compressionType}`);
+				return new Error(`Unsupported mimeType type: ${compressionType}`);
 		}
 
 		// click the link / download the file
@@ -225,7 +230,7 @@ function compressFile(file, compressionType, messageOutput) {
 			} else {
 				// download the file
 				const outputBuffer = buffer.transferToFixedLength(buffer.byteLength);
-				const result = downloadFile(outputBuffer, compressionType, file.name);
+				const result = downloadFile(outputBuffer, compressionType === "gzip" ? "application/gzip" : "application/zip", file.name);
 				if (result !== null) {
 					displayMessage(messageOutput, "error", result.message);
 				} else {
@@ -277,7 +282,7 @@ function decompressFile(file, compressionType, messageOutput) {
 			} else {
 				// download the file
 				const outputBuffer = buffer.transferToFixedLength(buffer.byteLength);
-				const result = downloadFile(outputBuffer, "uncompressed", file.name.slice(0, file.name.lastIndexOf(".")));
+				const result = downloadFile(outputBuffer, "application/zip", file.name.slice(0, file.name.lastIndexOf(".")));
 				if (result !== null) {
 					displayMessage(messageOutput, "error", result.message);
 				} else {
@@ -326,6 +331,70 @@ function displayMessage(element, type, msg) {
 }
 
 /**
+ * get the SHA512 Hash String from a given string
+ * @param {string} data - the data to be hashed with sha512
+ * @returns {Promise<string>} the hashed data
+ */
+async function getHash(data) {
+	let encoder = new TextEncoder();
+	let hashed = await crypto.subtle.digest("SHA-512", encoder.encode(data).buffer);
+	let hash = Array.from(new Uint8Array(hashed));
+	return hash.map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+/**
+ * Saves the page as an HTML File, with inline style and script.
+ * The hashes for the inline css and js are calculated and the CSP gets adjusted to allow only the inlined ones.
+ */
+async function saveHtmlFile() {
+	const encoder = new TextEncoder();
+	const decoder = new TextDecoder();
+	let html = document.children[0].outerHTML;
+	let css;
+	let js;
+	// get styles and script
+	let requests = await Promise.all([fetch(document.styleSheets[0].href, { method: "GET" }), fetch(document.scripts[0].src, { method: "GET" })]);
+
+	for await (let request of requests) {
+		if (request.ok) {
+			// store them in variables as text
+			if (request.url.endsWith("css")) {
+				css = await request.text();
+			}
+			if (request.url.endsWith("js")) {
+				js = await request.text();
+			}
+		}
+	}
+
+	for (let link of document.querySelectorAll("link")) {
+		if (link.rel !== "stylesheet") {
+			// remove any link, which is not the stylesheet one
+			html = html.replace(link.outerHTML, "");
+		} else {
+			// remove the link to stylesheet and insert inline style
+			html = html.replace(link.outerHTML, `\<style\>${css}\</style\>`);
+		}
+	}
+	// set the CSP, to allow to use this style
+	let cssHash = await getHash(css);
+	html = html.replace("style-src 'self'", `style-src 'sha512-${cssHash}'`);
+
+	// remove the script t and insert the inline script
+	html = html.replace(document.querySelector("script").outerHTML, `\<script type="module"\>${js}\</script\>`);
+	// set the CSP, to allow to execute this script.
+	let jsHash = await getHash(js);
+	html = html.replace("script-src 'self'", `script-src 'sha512-${jsHash}'`);
+
+	// remove the base tag
+	html = html.replace(document.querySelector("base").outerHTML, "");
+	// remove the link to download this file
+	html = html.replace(document.getElementById("save-html-notice").outerHTML, "");
+
+	downloadFile(encoder.encode("<!doctype html>\n" + html).buffer, "text/html", "simple-file-compressor");
+}
+
+/**
  *
  * @param {string} fileInputID HTMLInputElement id attribute value for the file upload button
  * @param {string} compressionTypeInputID HTMLSelectElement id attribute value for the compression type selection
@@ -333,15 +402,17 @@ function displayMessage(element, type, msg) {
  * @param {string} messageOutputID HTMLOutputElement id attribute value for the message output element
  * @param {string} shortcutID HTMLDivElement id attribute value  for the hidden div inside of the aside element
  * @param {string} shortcutToggle HTMLInputElement id attribute value for checkbox element to toggle the keyboard-shortcuts
+ * @param {string} htmlDownloadLinkID HTMLLinkElement id attribute value for the link, which saves the page as a html file with in-line style and script
  * @returns
  */
-function main(fileInputID, compressionTypeInputID, startInputID, messageOutputID, shortcutID, shortcutToggleID) {
+function main(fileInputID, compressionTypeInputID, startInputID, messageOutputID, shortcutID, shortcutToggleID, htmlDownloadLinkID) {
 	const fileInput = document.getElementById(fileInputID);
 	const typeSelect = document.getElementById(compressionTypeInputID);
 	const actionInput = document.getElementById(startInputID);
 	const messageOutput = document.getElementById(messageOutputID);
 	const shortcutDiv = document.getElementById(shortcutID);
 	const shortcutToggle = document.getElementById(shortcutToggleID);
+	const htmlDownloadLink = document.getElementById(htmlDownloadLinkID);
 	if (fileInput == null || typeSelect == null || actionInput == null || messageOutput == null || shortcutDiv == null || shortcutToggle == null) {
 		// console.log("File Input: ", fileInput == null, "type select: ", typeSelect == null, "action input: ", actionInput == null, "message output: ", messageOutput == null, "shortcut-div", shortcutDiv == null, "short-cut toggle", shortcutToggle == null);
 		// return console.error("failed to find input elements");
@@ -405,10 +476,16 @@ function main(fileInputID, compressionTypeInputID, startInputID, messageOutputID
 			shortcutToggle.ariaChecked = "true";
 		}
 	});
+	htmlDownloadLink.addEventListener("click", () => {
+		saveHtmlFile().then(() => {
+			// when done display message
+			displayMessage(messageOutput, "success", "Saved this Page for offline use!");
+		});
+	});
 }
 
 // execute main, once the document has loaded
 document.addEventListener("DOMContentLoaded", () => {
-	const elementIDs = ["compression-file-input", "compression-type-input", "compression-start-input", "notification", "shortcuts", "toggle-shortcuts"];
-	main(elementIDs[0], elementIDs[1], elementIDs[2], elementIDs[3], elementIDs[4], elementIDs[5]);
+	const elementIDs = ["compression-file-input", "compression-type-input", "compression-start-input", "notification", "shortcuts", "toggle-shortcuts", "save-html"];
+	main(elementIDs[0], elementIDs[1], elementIDs[2], elementIDs[3], elementIDs[4], elementIDs[5], elementIDs[6]);
 });
