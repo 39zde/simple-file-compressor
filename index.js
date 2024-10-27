@@ -348,7 +348,6 @@ async function getHash(data) {
  */
 async function saveHtmlFile() {
 	const encoder = new TextEncoder();
-	const decoder = new TextDecoder();
 	let html = document.children[0].outerHTML;
 	let css;
 	let js;
