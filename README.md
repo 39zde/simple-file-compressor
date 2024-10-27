@@ -27,7 +27,13 @@ There are 2 points, which I declare as  exceptions:
 - the use of JsDoc[^4], because it improves the readability, most IDE support it completely lives inside of comments. It's plain and simple, therefore worth it. 
 - the implementation of `Progressive Web Apps (PWA)`[^5]. Although it's a native browser feature, platform and browser conditions are lacking, to say the least. So I see why one might consider this as a violation of 'keep it as simple as possible'. Nonetheless I wanted to give users the possibility to install this app, if by chance the environment supports it. If it becomes to much of a hassle to keep up with the state of PWA, then I am going to drop it at once.
 
-### Links
+### License
+
+Licensed under the MIT License. Copyright (c) 2024 39zde.
+
+ See [LICENSE](./LICENSE).
+
+### Footnotes
 
 [^1]: https://github.com/whatwg/compression/blob/main/explainer.md#future-work
 [^2]: https://github.com/whatwg/compression/issues/34
