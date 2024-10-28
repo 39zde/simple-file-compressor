@@ -434,6 +434,10 @@ footer {
     padding: 6px;
 }
 
+#save-html-notice {
+    display: inline;
+}
+
 #save-html {
     cursor: pointer;
 }

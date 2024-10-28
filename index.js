@@ -385,8 +385,8 @@ async function saveHtmlFile() {
 	html = html.replace("script-src 'self'", `script-src 'sha256-${jsHash}'`);
 	// remove the base tag
 	html = html.replace(document.querySelector("base").outerHTML, "");
-	// remove the link to download this file
-	html = html.replace(document.getElementById("save-html-notice").outerHTML, "");
+	// don't show the html download option
+	html = html.replace( /(?<=\#save-html-notice[\s]{0,}\{\n[\s]{0,}display:[\s]{0,})inline/gm,"none");
 
 	downloadFile(encoder.encode("<!doctype html>\n" + html).buffer, "text/html", "simple-file-compressor");
 }
