@@ -434,10 +434,18 @@ footer {
     padding: 6px;
 }
 
-#save-html-notice {
+span#save-html-notice {
     display: inline;
 }
 
-#save-html {
+a#save-html {
     cursor: pointer;
+}
+
+body>output.noscripterror.error#notification {
+    cursor: not-allowed;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    top: 90px;
 }
