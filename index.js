@@ -146,8 +146,8 @@ function addKeyShortcuts(event, fileElement, compressionElement, actionElement) 
 /**
  * creates a file and downloads it
  * @param {ArrayBuffer} buf the data in from of an ARrayBuffer
- * @param {string | null} mimeType compression type or when uncompressed the mime type of the input file
- * @param {string} fileName
+ * @param {string} mimeType the mime type
+ * @param {string} fileName file name without the extension - extension is derived from mime type
  * @returns {Error | null}
  */
 function downloadFile(buf, mimeType, fileName) {
@@ -155,36 +155,109 @@ function downloadFile(buf, mimeType, fileName) {
 		//create a new link
 		const link = document.createElement("a");
 		// create the file
-		switch (mimeType) {
-			case "application/zip":
-				link.href = URL.createObjectURL(new Blob([buf], { type: "application/zip" }));
-				link.download = fileName + ".zip";
-				break;
-			case "application/gzip":
-				link.href = URL.createObjectURL(new Blob([buf], { type: "application/gzip" }));
-				link.download = fileName + ".gzip";
-				break;
-			case null:
-				link.href = URL.createObjectURL(new Blob([buf]));
-				link.download = fileName;
-				break;
-			case "text/html":
-				console.log("html");
-				link.href = URL.createObjectURL(new Blob([buf]), { type: "text/html" });
-				link.download = fileName + ".html";
-				break;
-			default:
-				return new Error(`Unsupported mimeType type: ${compressionType}`);
-		}
-
+		link.href = URL.createObjectURL(new Blob([buf], { type: mimeType }));
+		link.download = fileName + "." + mimeType.split("/")[1];
 		// click the link / download the file
 		link.click();
 		// remove the file
 		URL.revokeObjectURL(link.href);
 		return null;
 	} catch (e) {
-		return new Error("File has been created from given data");
+		return new Error("No file was created from given data");
 	}
+}
+
+/**f
+ * displays a message to an HTMLOutputElement via innerText
+ * @param {HTMLOutputElement} element
+ * @param {"progress" | "success" | "error" | "hide"} type
+ * @param {string | undefined} msg
+ */
+function displayMessage(element, type, msg) {
+	if (type !== "hide" && msg) {
+		element.setAttribute("aria-hidden", "false");
+		element.setAttribute("class", type);
+		switch (type) {
+			case "error":
+				element.innerText = "⚠️ " + msg;
+				break;
+			case "progress":
+				element.innerText = "⏳ " + msg;
+				break;
+			case "success":
+				element.innerText = "✅ " + msg;
+				break;
+			default:
+				element.innerText = msg;
+				break;
+		}
+	} else {
+		element.setAttribute("aria-hidden", "true");
+		element.removeAttribute("class");
+		element.innerText = "";
+	}
+}
+
+/**
+ * get the SHA-256 Hash String from a given string
+ * @param {string} data - the data to be hashed with SHA-256
+ * @returns {Promise<string>} the hashed encoded in base64
+ */
+async function getHash(data) {
+	let encoder = new TextEncoder();
+	let hashed = await crypto.subtle.digest("SHA-256", encoder.encode(data).buffer);
+	let binary = String.fromCharCode.apply(null, new Uint8Array(hashed));
+	return btoa(binary);
+}
+
+/**
+ * Saves the page as an HTML File, with inline style and script.
+ * The hashes for the inline css and js are calculated and the CSP gets adjusted to allow only the inlined ones.
+ */
+async function saveHtmlFile() {
+	const encoder = new TextEncoder();
+	let html = document.children[0].outerHTML;
+	let css;
+	let js;
+	// get styles and script
+	let requests = await Promise.all([fetch(document.styleSheets[0].href, { method: "GET" }), fetch(document.scripts[0].src, { method: "GET" })]);
+
+	for await (let request of requests) {
+		if (request.ok) {
+			// store them in variables as text
+			if (request.url.endsWith("css")) {
+				css = await request.text();
+			}
+			if (request.url.endsWith("js")) {
+				js = await request.text();
+			}
+		}
+	}
+
+	// don't show the html download option
+	css = css.replace(/(?<=\#save-html-notice[\s]{0,}\{\n[\s]{0,}display:[\s]{0,})inline/gm, "none");
+
+	for (let link of document.querySelectorAll("link")) {
+		if (link.rel !== "stylesheet") {
+			// remove any link, which is not the stylesheet one
+			html = html.replace(link.outerHTML, "");
+		} else {
+			// remove the link to stylesheet and insert inline style
+			html = html.replace(link.outerHTML, `\<style\>${css}\</style\>`);
+		}
+	}
+	// set the CSP, to allow to use this style
+	let cssHash = await getHash(css);
+	html = html.replace("style-src 'self'", `style-src 'sha256-${cssHash}'`);
+	// remove the script t and insert the inline script
+	html = html.replace(document.querySelector("script").outerHTML, `\<script type="module"\>${js}\</script\>`);
+	// set the CSP, to allow to execute this script.
+	let jsHash = await getHash(js);
+	html = html.replace("script-src 'self'", `script-src 'sha256-${jsHash}'`);
+	// remove the base tag
+	html = html.replace(document.querySelector("base").outerHTML, "");
+
+	downloadFile(encoder.encode("<!doctype html>\n" + html).buffer, "text/html", "simple-file-compressor");
 }
 
 /**
@@ -299,118 +372,23 @@ function decompressFile(file, compressionType, messageOutput) {
 		});
 }
 
-/**f
- * displays a message to an HTMLOutputElement via innerText
- * @param {HTMLOutputElement} element
- * @param {"progress" | "success" | "error" | "hide"} type
- * @param {string | undefined} msg
- */
-function displayMessage(element, type, msg) {
-	if (type !== "hide" && msg) {
-		element.setAttribute("aria-hidden", "false");
-		element.setAttribute("class", type);
-		switch (type) {
-			case "error":
-				element.innerText = "⚠️ " + msg;
-				break;
-			case "progress":
-				element.innerText = "⏳ " + msg;
-				break;
-			case "success":
-				element.innerText = "✅ " + msg;
-				break;
-			default:
-				element.innerText = msg;
-				break;
-		}
-	} else {
-		element.setAttribute("aria-hidden", "true");
-		element.removeAttribute("class");
-		element.innerText = "";
-	}
-}
-
-/**
- * get the SHA-256 Hash String from a given string
- * @param {string} data - the data to be hashed with SHA-256
- * @returns {Promise<string>} the hashed encoded in base64
- */
-async function getHash(data) {
-	let encoder = new TextEncoder();
-	let hashed = await crypto.subtle.digest("SHA-256", encoder.encode(data).buffer);
-	let binary = String.fromCharCode.apply(null, new Uint8Array(hashed));
-	return btoa(binary);
-}
-
-/**
- * Saves the page as an HTML File, with inline style and script.
- * The hashes for the inline css and js are calculated and the CSP gets adjusted to allow only the inlined ones.
- */
-async function saveHtmlFile() {
-	const encoder = new TextEncoder();
-	let html = document.children[0].outerHTML;
-	let css;
-	let js;
-	// get styles and script
-	let requests = await Promise.all([fetch(document.styleSheets[0].href, { method: "GET" }), fetch(document.scripts[0].src, { method: "GET" })]);
-
-	for await (let request of requests) {
-		if (request.ok) {
-			// store them in variables as text
-			if (request.url.endsWith("css")) {
-				css = await request.text();
-			}
-			if (request.url.endsWith("js")) {
-				js = await request.text();
-			}
-		}
-	}
-
-	// don't show the html download option
-	css = css.replace(/(?<=\#save-html-notice[\s]{0,}\{\n[\s]{0,}display:[\s]{0,})inline/gm, "none");
-
-	for (let link of document.querySelectorAll("link")) {
-		if (link.rel !== "stylesheet") {
-			// remove any link, which is not the stylesheet one
-			html = html.replace(link.outerHTML, "");
-		} else {
-			// remove the link to stylesheet and insert inline style
-			html = html.replace(link.outerHTML, `\<style\>${css}\</style\>`);
-		}
-	}
-	// set the CSP, to allow to use this style
-	let cssHash = await getHash(css);
-	html = html.replace("style-src 'self'", `style-src 'sha256-${cssHash}'`);
-	// remove the script t and insert the inline script
-	html = html.replace(document.querySelector("script").outerHTML, `\<script type="module"\>${js}\</script\>`);
-	// set the CSP, to allow to execute this script.
-	let jsHash = await getHash(js);
-	html = html.replace("script-src 'self'", `script-src 'sha256-${jsHash}'`);
-	// remove the base tag
-	html = html.replace(document.querySelector("base").outerHTML, "");
-
-	downloadFile(encoder.encode("<!doctype html>\n" + html).buffer, "text/html", "simple-file-compressor");
-}
-
 /**
  *
  * @param {string} fileInputID HTMLInputElement id attribute value for the file upload button
  * @param {string} compressionTypeInputID HTMLSelectElement id attribute value for the compression type selection
  * @param {string} startInputID HTMLInputElement id attribute value for the file action button
- * @param {string} messageOutputID HTMLOutputElement id attribute value for the message output element
  * @param {string} shortcutID HTMLDivElement id attribute value  for the hidden div inside of the aside element
  * @param {string} shortcutToggle HTMLInputElement id attribute value for checkbox element to toggle the keyboard-shortcuts
- * @param {string} htmlDownloadLinkID HTMLLinkElement id attribute value for the link, which saves the page as a html file with in-line style and script
  * @returns
  */
-function main(fileInputID, compressionTypeInputID, startInputID, messageOutputID, shortcutID, shortcutToggleID, htmlDownloadLinkID) {
+function main(fileInputID, compressionTypeInputID, startInputID, shortcutID, shortcutToggleID) {
+	const messageOutput = document.getElementById("notification");
+	const htmlDownloadLink = document.getElementById("save-html");
 	const fileInput = document.getElementById(fileInputID);
 	const typeSelect = document.getElementById(compressionTypeInputID);
 	const actionInput = document.getElementById(startInputID);
-	const messageOutput = document.getElementById(messageOutputID);
 	const shortcutDiv = document.getElementById(shortcutID);
 	const shortcutToggle = document.getElementById(shortcutToggleID);
-	const htmlDownloadLink = document.getElementById(htmlDownloadLinkID);
 	if (fileInput == null || typeSelect == null || actionInput == null || messageOutput == null || shortcutDiv == null || shortcutToggle == null) {
 		// console.log("File Input: ", fileInput == null, "type select: ", typeSelect == null, "action input: ", actionInput == null, "message output: ", messageOutput == null, "shortcut-div", shortcutDiv == null, "short-cut toggle", shortcutToggle == null);
 		// return console.error("failed to find input elements");
@@ -484,6 +462,6 @@ function main(fileInputID, compressionTypeInputID, startInputID, messageOutputID
 
 // execute main, once the document has loaded
 document.addEventListener("DOMContentLoaded", () => {
-	const elementIDs = ["compression-file-input", "compression-type-input", "compression-start-input", "notification", "shortcuts", "toggle-shortcuts", "save-html"];
+	const elementIDs = ["compression-file-input", "compression-type-input", "compression-start-input", "shortcuts", "toggle-shortcuts"];
 	main(elementIDs[0], elementIDs[1], elementIDs[2], elementIDs[3], elementIDs[4], elementIDs[5], elementIDs[6]);
 });

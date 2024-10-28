@@ -108,6 +108,14 @@ article {
     flex: 1;
 }
 
+body>output.noscripterror.error#notification {
+    cursor: not-allowed;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    top: 90px;
+}
+
 /*
     Keyboard Shortcuts
 */
@@ -385,7 +393,6 @@ input[type="file"]#compression-file-input {
 
 select#compression-type-input {
     height: var(--input-height);
-    ;
     min-width: var(--input-min-width);
     border-radius: calc(var(--input-height) /2);
     border: 2px solid var(--color-primary);
@@ -440,12 +447,4 @@ span#save-html-notice {
 
 a#save-html {
     cursor: pointer;
-}
-
-body>output.noscripterror.error#notification {
-    cursor: not-allowed;
-    left: 0;
-    right: 0;
-    margin: 0 auto;
-    top: 90px;
 }
