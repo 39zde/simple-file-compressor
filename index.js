@@ -331,15 +331,15 @@ function displayMessage(element, type, msg) {
 }
 
 /**
- * get the SHA512 Hash String from a given string
- * @param {string} data - the data to be hashed with sha512
- * @returns {Promise<string>} the hashed data
+ * get the SHA-256 Hash String from a given string
+ * @param {string} data - the data to be hashed with SHA-256
+ * @returns {Promise<string>} the hashed encoded in base64
  */
 async function getHash(data) {
 	let encoder = new TextEncoder();
-	let hashed = await crypto.subtle.digest("SHA-512", encoder.encode(data).buffer);
-	let hash = Array.from(new Uint8Array(hashed));
-	return hash.map((b) => b.toString(16).padStart(2, "0")).join("");
+	let hashed = await crypto.subtle.digest("SHA-256", encoder.encode(data).buffer);
+	let binary = String.fromCharCode.apply(null, new Uint8Array(hashed));
+	return btoa(binary);
 }
 
 /**
@@ -377,14 +377,12 @@ async function saveHtmlFile() {
 	}
 	// set the CSP, to allow to use this style
 	let cssHash = await getHash(css);
-	html = html.replace("style-src 'self'", `style-src 'sha512-${cssHash}'`);
-
+	html = html.replace("style-src 'self'", `style-src 'sha256-${cssHash}'`);
 	// remove the script t and insert the inline script
 	html = html.replace(document.querySelector("script").outerHTML, `\<script type="module"\>${js}\</script\>`);
 	// set the CSP, to allow to execute this script.
 	let jsHash = await getHash(js);
-	html = html.replace("script-src 'self'", `script-src 'sha512-${jsHash}'`);
-
+	html = html.replace("script-src 'self'", `script-src 'sha256-${jsHash}'`);
 	// remove the base tag
 	html = html.replace(document.querySelector("base").outerHTML, "");
 	// remove the link to download this file
