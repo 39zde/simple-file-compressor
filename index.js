@@ -477,7 +477,7 @@ function main(fileInputID, compressionTypeInputID, startInputID, messageOutputID
 	htmlDownloadLink.addEventListener("click", () => {
 		saveHtmlFile().then(() => {
 			// when done display message
-			displayMessage(messageOutput, "success", "Saved this Page for offline use!");
+			displayMessage(messageOutput, "success", "Saved this page for offline use!");
 		});
 	});
 }
