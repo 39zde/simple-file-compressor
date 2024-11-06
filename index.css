@@ -222,16 +222,36 @@ aside {
 
 }
 
-span.letter-display {
-    display: flex;
-    margin: 6px 0;
-    width: 100%;
 
-    &>span {
-        display: inline-flex;
-        text-decoration: none;
-    }
+table,
+tbody,
+tr {
+    padding: 0;
+    margin: 0;
 }
+
+td {
+    padding-bottom: 12px;
+    width: 140px;
+}
+
+tr>td>p {
+    margin: 0;
+    text-align: left;
+    padding: 0;
+}
+
+tr>td>kbd {
+    margin: 0 auto;
+}
+
+tr>td>span {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    white-space: nowrap;
+}
+
 
 kbd {
     display: flex;
@@ -441,8 +461,9 @@ footer {
     padding: 6px;
 }
 
-span#save-html-notice {
-    display: inline;
+span#save-html-notice,
+tr#save-html-shortcut {
+    display: auto;
 }
 
 a#save-html {
