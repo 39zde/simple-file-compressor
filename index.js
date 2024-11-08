@@ -345,7 +345,7 @@ class UtilityFunctions {
 		if (importsPath[0].startsWith("/")) {
 			importsPath[0] = importsPath[0].replace("/", "");
 		}
-		const importedScriptRequest = await fetch(location.protocol + "//" + location.host + "/" + importsPath[0]);
+		const importedScriptRequest = await fetch(location.origin + location.pathname + importsPath[0]);
 		if (!importedScriptRequest.ok) {
 			throw new Error("Failed to fetch imported script");
 		}
@@ -363,7 +363,7 @@ class UtilityFunctions {
 			)
 			.replaceAll(/(?<simple_comment>(?<=(?<![\"\']))[\/]{2,}.*)/g, "")
 			// fill missing semicolons
-			
+
 			.replaceAll(/(?<=[^\s;\{\[\}\|\,\(\:\>\=\*\+\-\/\%\?])(?=(\s*[\r\n]))(?![\s\t\n]{0,}[\.\)])/g, ";")
 			// minify
 			.replaceAll(/[\s\t]{0,}\n[\s\t]{0,}|\t/g, "");
