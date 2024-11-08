@@ -1,0 +1,130 @@
+/*
+    Steps
+*/
+
+form.steps {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: var(--label-padding);
+    width: 100%;
+    padding: var(--label-padding) 0;
+}
+
+form.steps>label {
+    box-shadow: var(--shadow);
+    border-radius: calc(var(--input-height) /2);
+    height: fit-content;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 12px;
+    flex-wrap: nowrap;
+    padding: var(--label-padding);
+    border: 2px solid var(--color-light);
+
+    &:focus-visible,
+    &:hover {
+        border: 2px solid var(--color-focus);
+        outline: 2px solid var(--color-focus-light);
+    }
+}
+
+@media screen and (width < 550px) {
+    form.steps>label {
+        width: 90%;
+    }
+}
+
+@media screen and (width >=550px) {
+    form.steps>label {
+        min-width: var(--label-min-width);
+    }
+}
+
+/*
+    File Upload
+*/
+
+input[type="file"]#compression-file-input {
+    display: flex;
+    overflow: visible;
+    outline: none;
+    height: var(--input-height);
+    min-width: var(--input-min-width);
+    cursor: pointer;
+    max-width: calc(var(--label-min-width) - 2* var(--label-padding));
+
+    &::-webkit-file-upload-button,
+    &::file-selector-button {
+        height: var(--input-height);
+        min-width: var(--input-min-width);
+        border-radius: calc(var(--input-height) /2);
+        border: 2px solid var(--color-primary);
+        background-color: inherit;
+        color: inherit;
+        text-align: center;
+        font-weight: 500;
+        font-size: 20px;
+        margin-inline-end: 12px;
+        letter-spacing: normal;
+    }
+
+    &:hover {
+
+        &::-webkit-file-upload-button,
+        &::file-selector-button {
+            background-color: var(--color-primary);
+        }
+    }
+
+}
+
+/*
+    Compression Type
+*/
+
+select#compression-type-input {
+    height: var(--input-height);
+    min-width: var(--input-min-width);
+    border-radius: calc(var(--input-height) /2);
+    border: 2px solid var(--color-primary);
+    background: var(--color-light);
+    color: inherit;
+    text-align: center;
+    font-weight: 500;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+/*
+    Compression Start
+*/
+
+input[type="button"]#compression-start-input {
+    height: var(--input-height);
+    min-width: var(--input-min-width);
+    border-radius: calc(var(--input-height) /2);
+    border: 2px solid var(--color-primary);
+    background-color: inherit;
+    color: inherit;
+    text-align: center;
+    font-weight: 500;
+    font-size: 20px;
+    cursor: pointer;
+
+    &:hover {
+        &:not(:disabled) {
+            background-color: var(--color-primary);
+        }
+    }
+
+    &:disabled {
+        border-color: var(--color-gray);
+        color: var(--color-gray);
+        cursor: not-allowed;
+    }
+
+}
