@@ -18,8 +18,8 @@
     --shortcut-width: 320px;
 
     --padding: 12px;
-    --padding-less: calc(var(--padding)/2);
-    --padding-more: calc(var(--padding)*2);
+    --padding-less: 6px;
+    --padding-more: 24px;
     --label-min-width: 360px;
     --input-min-width: 128px;
     --input-height: 42px;
