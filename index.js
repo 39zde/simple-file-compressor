@@ -345,7 +345,10 @@ class UtilityFunctions {
 		if (importsPath[0].startsWith("/")) {
 			importsPath[0] = importsPath[0].replace("/", "");
 		}
-		const importedScriptRequest = await fetch(location.origin + location.pathname + importsPath[0], {
+		let importedScriptPath = location.origin;
+		importedScriptPath += location.pathname.includes("html") ? "/" : location.pathname;
+		importedScriptPath += importsPath[0];
+		const importedScriptRequest = await fetch(importedScriptPath, {
 			method: "GET",
 		});
 		if (!importedScriptRequest.ok) {

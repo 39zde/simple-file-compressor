@@ -17,7 +17,9 @@
     --shortcut-list-handle-width: 20px;
     --shortcut-width: 320px;
 
-    --label-padding: 12px;
+    --padding: 12px;
+    --padding-less: calc(var(--padding)/2);
+    --padding-more: calc(var(--padding)*2);
     --label-min-width: 360px;
     --input-min-width: 128px;
     --input-height: 42px;
@@ -31,6 +33,7 @@
         --color-dark: #010613;
 
         --shadow: 0px 2px 6px -1px var(--color-gray);
+        --shadow-inset: inset 0 0 6px -1px var(--color-gray);
     }
 }
 
@@ -42,6 +45,7 @@
         --color-dark: #FAF9F6;
 
         --shadow: 0px 2px 3px 0px #3a3a3a;
+        --shadow-inset: inset 0 0 6px 0 #3a3a3a;
     }
 }
 
@@ -54,6 +58,7 @@ html {
     height: 100vh;
     margin: 0;
     box-sizing: border-box;
+    overflow-x: hidden;
 }
 
 body {
@@ -64,9 +69,11 @@ body {
 }
 
 header {
-    border-bottom: 1px solid var(--color-gray);
+    border-width: 0 0 2px 0;
+    border-style: solid;
+    border-color: var(--color-gray);
     text-align: center;
-    padding: 6px;
+    padding: var(--padding-less);
 
     &>small {
         color: var(--color-gray);
@@ -116,7 +123,7 @@ aside {
     height: 100%;
     width: var(--shortcut-list-handle-width);
     transition: width 100ms linear;
-    border-right: 1px solid var(--color-gray);
+    border-right: 1px solid var(--color-gray-light);
     display: flex;
     flex-direction: row-reverse;
     justify-content: flex-start;
@@ -156,7 +163,7 @@ aside {
     text-align: center;
     font-size: var(--shortcut-list-handle-width);
     position: absolute;
-    color: var(--color-dark);
+    color: var(--color-gray);
     height: var(--shortcut-list-handle-width);
     width: var(--shortcut-list-handle-width);
     top: 0;
@@ -176,12 +183,11 @@ aside {
     bottom: 0;
     right: 0;
     margin: auto 0;
-    color: var(--color-dark);
-
+    color: var(--color-gray);
 }
 
 #shortcuts {
-    padding-left: 12px;
+    padding-left: var(--padding);
     flex-wrap: nowrap;
     width: var(--shortcut-list-width);
     min-width: var(--shortcut-list-width);
@@ -195,8 +201,8 @@ aside {
     display: none;
 
     &>h3 {
-        margin-bottom: 6px;
-        margin-top: 12px;
+        margin-bottom: var(--padding-less);
+        margin-top: var(--padding);
         text-decoration: underline;
     }
 
@@ -206,12 +212,10 @@ aside {
 
         &>li {
             display: flex;
-            gap: 12px;
-            margin: 6px 0;
+            gap: var(--padding);
+            margin: var(--padding-less) 0;
         }
     }
-
-
 }
 
 table,
@@ -222,8 +226,9 @@ tr {
 }
 
 td {
-    padding-bottom: 12px;
-    width: 140px;
+    padding-bottom: var(--padding);
+    width: var(--shortcut-list-width);
+    user-select: none;
 }
 
 tr>td>p {
@@ -254,7 +259,7 @@ kbd {
     height: 18px;
     padding: 1px;
     width: 22px;
-    margin-left: 6px;
+    margin-left: var(--padding-less);
     font-family: monospace;
     font-size: 16px;
     cursor: none;
@@ -270,6 +275,10 @@ aside:has(.toggle-shortcuts-label):has(#toggle-shortcuts:checked) {
 
 @media (prefers-reduced-motion),
 (max-aspect-ratio: 1/1) and (width < 750px) {
+    h1 {
+        font-size: larger;
+    }
+
     aside {
         display: none;
     }
@@ -284,16 +293,16 @@ output#notification {
     border-style: solid;
     border-color: var(--color-light);
     border-radius: calc(var(--input-height) /2);
-    top: var(--label-padding);
+    top: var(--padding);
     z-index: 10;
-    padding: var(--label-padding);
+    padding: var(--padding);
     height: fit-content;
     display: none;
     box-shadow: var(--shadow);
     cursor: pointer;
     background-color: var(--color-light);
     text-align: center;
-    margin: var(--label-padding);
+    margin: var(--padding);
     white-space: break-spaces;
 }
 
@@ -325,8 +334,10 @@ body>output.noscripterror.error#notification {
 footer {
     text-align: center;
     align-content: end;
-    border-top: 1px solid var(--color-gray);
-    padding: 6px;
+    border-width: 2px 0 0;
+    border-style: solid;
+    border-color: var(--color-gray);
+    padding: var(--padding-less);
 }
 
 span#save-html-notice,
