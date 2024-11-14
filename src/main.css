@@ -7,9 +7,9 @@ form.steps {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: var(--label-padding);
+    gap: var(--padding);
     width: 100%;
-    padding: var(--label-padding) 0;
+    padding: var(--padding) 0;
 }
 
 form.steps>label {
@@ -20,9 +20,9 @@ form.steps>label {
     flex-direction: column;
     align-items: flex-start;
     justify-content: flex-start;
-    gap: 12px;
+    gap: var(--padding);
     flex-wrap: nowrap;
-    padding: var(--label-padding);
+    padding: var(--padding);
     border: 2px solid var(--color-light);
 
     &:focus-visible,
@@ -55,7 +55,7 @@ input[type="file"]#compression-file-input {
     height: var(--input-height);
     min-width: var(--input-min-width);
     cursor: pointer;
-    max-width: calc(var(--label-min-width) - 2* var(--label-padding));
+    max-width: calc(var(--label-min-width) - 2* var(--padding));
 
     &::-webkit-file-upload-button,
     &::file-selector-button {
@@ -68,7 +68,7 @@ input[type="file"]#compression-file-input {
         text-align: center;
         font-weight: 500;
         font-size: 20px;
-        margin-inline-end: 12px;
+        margin-inline-end: var(--padding);
         letter-spacing: normal;
     }
 
